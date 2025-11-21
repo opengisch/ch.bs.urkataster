@@ -176,7 +176,7 @@ direction LR
 
 Es werden konzequent UUIDs als PKs verwendet (bei einer Umsetzung mit INTERLIS, werden die als OID verwendet - und in der Datenbank dann dennoch Serielle t_ids erstellt).
 
-## Workflows
+## Workflows Erfassung / Bearbeitung (R05, R06, R07)
 
 ### Plugin Workflow
 
@@ -220,3 +220,9 @@ flowchart TD
 ```
 
 Weiter bei Bedarf bei 1.
+
+### Anzeige (R08, RO9, R10, R11)
+
+#### Zeitliche Einschränkung
+
+Es wird nur gefordert, die Geometrie zeitlich zu filtern (auch nur das wurde offeriert). Dennoch könnte es vielleicht sinnvoll sein, auch die Attribute und Referenzobjekte zeitlich zu filtern. Dafür müsste man wohl einen Layerfilter bauen, der über einen selbstgebauten Slider sich je nach dem anpasst.
