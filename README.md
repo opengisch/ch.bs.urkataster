@@ -2,6 +2,12 @@
 
 ## Datenmodell 
 
+### Alt
+
+![uml-old](uml-old.png)
+
+### Neu
+
 ```mermaid
 erDiagram
     %% --- HAUPTTABELLEN ---
@@ -133,7 +139,9 @@ erDiagram
     referenzobjekt ||--o{ gebaeude_attribute : "has"
     referenzobjekt ||--o{ adresse_attribute : "has"
 
-    %% Base Layer ist Quelle für Geometrien
+    referenzobjekt o|--o{ referenzobjekt : "has"
+
+    %% Quelldaten für Geometrien
     gebaeude ||--o{ quelldaten : ""
     adresse ||--o{ quelldaten : ""
     parzelle ||--o{ quelldaten : ""
@@ -175,6 +183,198 @@ direction LR
 ### UUIDs als PKs
 
 Es werden konzequent UUIDs als PKs verwendet (bei einer Umsetzung mit INTERLIS, werden die als OID verwendet - und in der Datenbank dann dennoch Serielle t_ids erstellt).
+
+### Vorgänger Referenz
+
+Der fk_vorgaenger referenziert auf das Vorgänger RO. Das heisst es bräuchte eine rekursive Beziehung.
+
+### Auf Vererbung wird verzichtet
+
+#### Modellierung
+Mit Vererbungen sähe es so aus:
+
+```mermaid
+classDiagram
+    %% --- VERERBUNG (Inheritance) ---
+    %% Der Pfeil zeigt zum Elternteil (Supertyp)
+    referenzobjekt <|-- gebaeude
+    referenzobjekt <|-- parzelle
+    referenzobjekt <|-- adresse
+
+    %% --- KOMPOSITION (Zugehörigkeit) ---
+    %% Der gefüllte Rauten-Pfeil bedeutet: 
+    %% "gebaeude_attribute" existiert nicht ohne "gebaeude"
+    gebaeude *-- gebaeude_attribute : besitzt
+    adresse *-- adresse_attribute : besitzt
+    gebaeude *-- gebaeude_geom : besitzt
+    adresse *-- adresse_geom : besitzt
+
+    %% --- KLASSEN DEFINITIONEN ---
+    
+    class referenzobjekt {
+        +UUID id_referenzobjekt
+    }
+
+    class gebaeude {
+        +UUID id_gebaeude
+    }
+
+    class parzelle {
+        +UUID parzelle_id
+        +geom geometrie
+        +String bsp
+    }
+
+    class adresse {
+        +UUID id_adresse
+    }
+
+    class gebaeude_attribute {
+        +UUID id_gebaeude_attribute
+        +String bsp
+    }
+
+    class adresse_attribute {
+        +UUID id_adresse_attribute
+        +String bsp
+    }
+
+    class gebaeude_geom {
+        +UUID gebaeude_geom
+        +geom geometrie
+    }
+
+    class adresse_geom {
+        +UUID adresse_geom
+        +geom geometrie
+    }
+```
+
+#### Implementierung
+
+Könnte dann so in der DB realisiert werden.
+
+```mermaid
+
+erDiagram
+
+%% --- HAUPTTABELLEN ---
+
+
+
+referenzobjekt_gebaeude {
+
+UUID id_referenzobjekt PK
+
+}
+
+referenzobjekt_parzelle {
+
+UUID id_referenzobjekt PK
+geom geomerie
+String bsp
+
+}
+
+referenzobjekt_adresse {
+
+UUID id_referenzobjekt PK
+
+}
+
+
+gebaeude_geom {
+
+UUID id_gebaeude PK
+geom geomerie
+
+
+}
+
+
+
+adresse_geom {
+
+UUID id_adresse PK
+geom geomerie
+
+}
+
+
+gebaeude_attribute {
+
+UUID id_gebaeude_attribute PK
+String bsp
+
+}
+
+
+adresse_attribute {
+
+UUID id_adresse_attribute PK
+String bsp
+
+}
+
+    
+    %% Referenzobjekt besitzt Geometrien und Attribute
+    referenzobjekt_gebaeude ||--o{ gebaeude_geom : "has"
+    referenzobjekt_adresse ||--o{ adresse_geom : "has"
+    referenzobjekt_gebaeude ||--o{ gebaeude_attribute : "has"
+    referenzobjekt_adresse ||--o{ adresse_attribute : "has"
+
+```
+
+Im Vergleich zur aktuellen Implementierung:
+
+```mermaid
+erDiagram
+    %% --- HAUPTTABELLEN ---
+
+    referenzobjekt {
+        UUID id_referenzobjekt PK
+    }
+
+    %% --- GEOMETRIE-TABELLEN ---
+
+    gebaeude {
+        UUID id_gebaeude PK
+        geom geomerie
+    }
+
+    adresse {
+        UUID id_adresse PK
+        geom geomerie
+    }
+
+    parzelle {
+        UUID parzelle_id PK
+        geom geomerie
+        String bsp
+    }
+
+    %% --- ATTRIBUT-TABELLEN ---
+
+    gebaeude_attribute {
+        UUID id_gebaeude_attribute PK
+        String bsp
+    }
+
+    adresse_attribute {
+        UUID id_adresse_attribute PK
+        String bsp
+    }
+
+    %% Referenzobjekt besitzt Geometrien und Attribute
+    referenzobjekt ||--o{ gebaeude : "has"
+    referenzobjekt ||--o{ adresse : "has"
+    referenzobjekt ||--|o parzelle : "has"
+    referenzobjekt ||--o{ gebaeude_attribute : "has"
+    referenzobjekt ||--o{ adresse_attribute : "has"
+```
+
+
+
 
 ## Workflows Erfassung / Bearbeitung (R05, R06, R07)
 
