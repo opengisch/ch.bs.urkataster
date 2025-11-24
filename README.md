@@ -9,7 +9,7 @@
 ### Neu
 
 ```mermaid
-erDiagram
+erDiagram 
     %% --- HAUPTTABELLEN ---
 
     referenzobjekt {
@@ -23,7 +23,6 @@ erDiagram
         INTEGER idkantonal
         TEXT sektionparzelle
         INTEGER indexparzelle
-        UUID fk_vorgaenger
         TIMESTAMP created
         TIMESTAMP modified
         TEXT modified_by
@@ -44,14 +43,18 @@ erDiagram
         TIMESTAMP created
         TIMESTAMP modified
         TEXT modified_by
-    }
-
-    adresse {
-        UUID id_adresse PK
+    }    
+    
+    gebaeude_attribute {
+        UUID id_gebaeude_attribute PK
         UUID fk_referenzobjekt FK
-        geometry geometry
-        TEXT quelle
-        TEXT genauigkeit_raeumlich
+        TEXT name
+        TEXT nutzung
+        INTEGER stockwerke
+        NUMERIC hoehe
+        NUMERIC flaeche
+        NUMERIC volumen
+        TEXT genauigkeit_thematisch
         DATE vermutlich_ab
         DATE gesichert_ab
         DATE gesichert_bis
@@ -67,6 +70,18 @@ erDiagram
         geometry geometry
         TEXT quelle
         TEXT genauigkeit_raeumlich
+        DATE vermutlich_ab
+        DATE gesichert_ab
+        DATE gesichert_bis
+        DATE vermutlich_bis
+        TIMESTAMP created
+        TIMESTAMP modified
+        TEXT modified_by
+    }
+
+    parzelle_attribute {
+        UUID id_adresse_attribute PK
+        UUID fk_referenzobjekt FK
         TEXT nummer
         TEXT sektion
         TEXT index
@@ -81,18 +96,12 @@ erDiagram
         TEXT modified_by
     }
 
-    %% --- ATTRIBUT-TABELLEN ---
-
-    gebaeude_attribute {
-        UUID id_gebaeude_attribute PK
+    adresse {
+        UUID id_adresse PK
         UUID fk_referenzobjekt FK
-        TEXT name
-        TEXT nutzung
-        INTEGER stockwerke
-        NUMERIC hoehe
-        NUMERIC flaeche
-        NUMERIC volumen
-        TEXT genauigkeit_thematisch
+        geometry geometry
+        TEXT quelle
+        TEXT genauigkeit_raeumlich
         DATE vermutlich_ab
         DATE gesichert_ab
         DATE gesichert_bis
@@ -130,26 +139,39 @@ erDiagram
         string beschreibung
         string pfad
     }
+
+    vorgaenger {
+        UUID fk_vorgaenger
+        UUID fk_nachfolger
+    }
+
     %% --- BEZIEHUNGEN ---
     
     %% Referenzobjekt besitzt Geometrien und Attribute
-    referenzobjekt ||--o{ gebaeude : "has"
-    referenzobjekt ||--o{ adresse : "has"
-    referenzobjekt ||--|o parzelle : "has"
-    referenzobjekt ||--o{ gebaeude_attribute : "has"
-    referenzobjekt ||--o{ adresse_attribute : "has"
+    referenzobjekt |o--o{ gebaeude : "has"
+    referenzobjekt |o--o{ adresse : "has"
+    referenzobjekt |o--o{ parzelle : "has"
+    referenzobjekt |o--o{ gebaeude_attribute : "has"
+    referenzobjekt |o--o{ adresse_attribute : "has"
+    referenzobjekt |o--o{ parzelle_attribute : "has"
 
-    referenzobjekt o|--o{ referenzobjekt : "has"
+    referenzobjekt }o--o{ vorgaenger : "has"
+    referenzobjekt o|--o{ vorgaenger : "has"
 
     %% Quelldaten für Geometrien
     gebaeude ||--o{ quelldaten : ""
     adresse ||--o{ quelldaten : ""
     parzelle ||--o{ quelldaten : ""
+    gebaeude_attribute ||--o{ quelldaten : ""
+    adresse_attribute ||--o{ quelldaten : ""
+    parzelle_attribute ||--o{ quelldaten : ""
 ```
 
 ### Änderung der Kardinalität
 
-Die Kardinalität ist im ERM des Konzepts zwischen den Geometrie- oder auch Attributobjekten zu Referenzobjekte ist 0..1 zu 1, währenddem in der Studie einerseits eine 1 zu n Beziehung beschrieben ist (6.4.1). Dies ist wird ebenso mit den Lebenszyklen impliziert (6.3.3) Bei Gebäude und auch Adressen "Solange sich die Lage der Adresse auf denselben Gebäudeeingang bezieht und sich nur geringfügig verändert, sollte das Referenzobjekt bestehen bleiben." Denn da sollen ja wohl noch beide Punkte erfasst bleiben. Bei Parzellen hingegen würde eine 1 zu 1 Beziehung funktionieren, da immer ein neues Referenzobjekt erstellt wird bei einer Änderung der Geometrie.
+Die Kardinalität ist im ERM des Konzepts zwischen den Geometrie- oder auch Attributobjekten zu Referenzobjekte ist 0..1 zu 1, währenddem in der Studie einerseits eine 1 zu n Beziehung beschrieben ist (6.4.1). Dies ist wird ebenso mit den Lebenszyklen impliziert (6.3.3) Bei Gebäude und auch Adressen "Solange sich die Lage der Adresse auf denselben Gebäudeeingang bezieht und sich nur geringfügig verändert, sollte das Referenzobjekt bestehen bleiben." Denn da sollen ja wohl noch beide Punkte erfasst bleiben. Bei Parzellen wurde ebenfalls diese Systematik appliziert, auch wenn es evtl. meistens nur eine Parzelle pro Referenzobjekt hat.
+
+Ebenso wurde das Referenzobjekt optional. Auch wenn thematisch jede Geometrie oder jedes Attributset zu einem Referenzobjekt gehört, würde ansonsten die Datennachführung verunmöglicht werden, da momentan erst Geometrien ohne Referenzobjekte existieren.
 
 ### Datenquellen (Raster)
 
@@ -180,33 +202,34 @@ direction LR
     geometrie ||--o{ quelldaten : ""
 ```
 
+Es sollen auch Quelldaten für die Attribute verlinkt werden können.
+
 ### UUIDs als PKs
 
 Es werden konzequent UUIDs als PKs verwendet (bei einer Umsetzung mit INTERLIS, werden die als OID verwendet - und in der Datenbank dann dennoch Serielle t_ids erstellt).
 
 ### Vorgänger Referenz
 
-Der fk_vorgaenger referenziert auf das Vorgänger RO. Das heisst es bräuchte eine rekursive Beziehung.
+Der fk_vorgaenger referenziert auf das Vorgänger RO. Das heisst es bräuchte eine rekursive Beziehung. Doch im Meeting mit Jan und Andi kam auf, dass  es auch mehrere Vorgänger haben könnte (wenn sich zBs. eine Fläche teilt). Deshalb soll es eine m zu m beziehung sein.
 
-### Auf Vererbung wird verzichtet
+### Idee mit Vererbung
+
+Wird im Moment davon abgesehen.
 
 #### Modellierung
 Mit Vererbungen sähe es so aus:
 
 ```mermaid
 classDiagram
-    %% --- VERERBUNG (Inheritance) ---
-    %% Der Pfeil zeigt zum Elternteil (Supertyp)
     referenzobjekt <|-- gebaeude
     referenzobjekt <|-- parzelle
     referenzobjekt <|-- adresse
 
-    %% --- KOMPOSITION (Zugehörigkeit) ---
-    %% Der gefüllte Rauten-Pfeil bedeutet: 
-    %% "gebaeude_attribute" existiert nicht ohne "gebaeude"
     gebaeude *-- gebaeude_attribute : besitzt
+    parzelle *-- parzelle_attribute : besitzt
     adresse *-- adresse_attribute : besitzt
     gebaeude *-- gebaeude_geom : besitzt
+    parzelle *-- parzelle_geom : besitzt
     adresse *-- adresse_geom : besitzt
 
     %% --- KLASSEN DEFINITIONEN ---
@@ -219,17 +242,20 @@ classDiagram
         +UUID id_gebaeude
     }
 
-    class parzelle {
-        +UUID parzelle_id
-        +geom geometrie
-        +String bsp
-    }
-
     class adresse {
         +UUID id_adresse
     }
 
+    class parzelle {
+        +UUID id_parzelle 
+    }
+
     class gebaeude_attribute {
+        +UUID id_gebaeude_attribute
+        +String bsp
+    }
+
+    class parzelle_attribute {
         +UUID id_gebaeude_attribute
         +String bsp
     }
@@ -240,12 +266,17 @@ classDiagram
     }
 
     class gebaeude_geom {
-        +UUID gebaeude_geom
+        +UUID id_gebaeude_geom
+        +geom geometrie
+    }
+
+    class parzelle_geom {
+        +UUID id_parzelle_geom
         +geom geometrie
     }
 
     class adresse_geom {
-        +UUID adresse_geom
+        +UUID id_adresse_geom
         +geom geometrie
     }
 ```
@@ -271,8 +302,6 @@ UUID id_referenzobjekt PK
 referenzobjekt_parzelle {
 
 UUID id_referenzobjekt PK
-geom geomerie
-String bsp
 
 }
 
@@ -286,6 +315,15 @@ UUID id_referenzobjekt PK
 gebaeude_geom {
 
 UUID id_gebaeude PK
+geom geomerie
+
+
+}
+
+
+parzelle_geom {
+
+UUID id_parzelle PK
 geom geomerie
 
 
@@ -309,6 +347,14 @@ String bsp
 }
 
 
+parzelle_attribute {
+
+UUID id_parzelle_attribute PK
+String bsp
+
+}
+
+
 adresse_attribute {
 
 UUID id_adresse_attribute PK
@@ -319,8 +365,10 @@ String bsp
     
     %% Referenzobjekt besitzt Geometrien und Attribute
     referenzobjekt_gebaeude ||--o{ gebaeude_geom : "has"
+    referenzobjekt_parzelle ||--o{ parzelle_geom : "has"
     referenzobjekt_adresse ||--o{ adresse_geom : "has"
     referenzobjekt_gebaeude ||--o{ gebaeude_attribute : "has"
+    referenzobjekt_parzelle ||--o{ parzelle_attribute : "has"
     referenzobjekt_adresse ||--o{ adresse_attribute : "has"
 
 ```
@@ -342,21 +390,25 @@ erDiagram
         geom geomerie
     }
 
-    adresse {
-        UUID id_adresse PK
-        geom geomerie
-    }
-
     parzelle {
         UUID parzelle_id PK
         geom geomerie
-        String bsp
+    }
+
+    adresse {
+        UUID id_adresse PK
+        geom geomerie
     }
 
     %% --- ATTRIBUT-TABELLEN ---
 
     gebaeude_attribute {
         UUID id_gebaeude_attribute PK
+        String bsp
+    }
+
+    parzelle_attribute {
+        UUID id_parzelle_attribute PK
         String bsp
     }
 
@@ -368,8 +420,9 @@ erDiagram
     %% Referenzobjekt besitzt Geometrien und Attribute
     referenzobjekt ||--o{ gebaeude : "has"
     referenzobjekt ||--o{ adresse : "has"
-    referenzobjekt ||--|o parzelle : "has"
+    referenzobjekt ||--o{ parzelle : "has"
     referenzobjekt ||--o{ gebaeude_attribute : "has"
+    referenzobjekt ||--o{ parzelle_attribute : "has"
     referenzobjekt ||--o{ adresse_attribute : "has"
 ```
 
