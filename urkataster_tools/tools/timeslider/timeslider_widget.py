@@ -25,7 +25,7 @@ class TimesliderWidget(QWidget):
 
 
         self.clear_button = QToolButton()
-        self.clear_button.setIcon(QgsApplication.getThemeIcon("/iconClearConsole.svg"))
+        self.clear_button.setIcon(QgsApplication.getThemeIcon("/console/iconClearConsole.svg"))
 
         self.nur_gesichert_checkbox = QCheckBox("Nur gesicherte Daten anzeigen")
 
@@ -74,4 +74,12 @@ class TimesliderWidget(QWidget):
             self.slider.blockSignals(False)
 
     def _clear(self)-> None:
+        # reset values
+        self.date_edit.blockSignals(True)
+        self.slider.blockSignals(True)
+        self.slider.setValue(0)
+        self.date_edit.setDate(self.start_date)
+        self.date_edit.blockSignals(False)
+        self.slider.blockSignals(False)
+        # emit clear signal
         self.trigger_clear.emit()
