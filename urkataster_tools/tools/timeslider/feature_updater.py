@@ -46,3 +46,18 @@ class FeatureUpdater(QObject):
                     layer.setSubsetString("({from_date} IS NULL OR {from_date} <= '{date}') AND ({to_date} IS NULL OR {to_date} >= '{date}')".format(from_date=from_field, to_date=to_field, date=date_str))
         
         self.iface.messageBar().pushInfo("Urkataster Timeslider", "Layers updated for date: {}".format(date_str))   
+
+    def clear_filters(self):
+        """
+        Filter all vector layers in the project based on the given date and gesichert flag.
+        
+        Args: 
+            date (QDate): The date to filter layers by.
+            gesichert (bool): If True, use gesichert fields; otherwise, use vermutlich fields.
+        """
+
+        for layer in QgsProject.instance().mapLayers().values():
+            if layer.type() == QgsMapLayer.VectorLayer:
+                layer.setSubsetString("")
+        
+        self.iface.messageBar().pushInfo("Urkataster Timeslider", "Layers filter removed")   

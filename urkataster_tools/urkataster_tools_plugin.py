@@ -46,6 +46,7 @@ class UrkatasterToolsPlugin(QObject):
         self._timeslider_action = self._timeslider_toolbar.addWidget(self._timeslider)
         self._timeslider_action.setToolTip(self.tr("Urkataster Timeslider"))
         self._timeslider.trigger_update.connect(self._feature_updater.filter_layers)
+        self._timeslider.trigger_clear.connect(self._feature_updater.clear_filters)
 
     def unload(self):
         
