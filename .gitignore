@@ -1,0 +1,7 @@
+__pycache__
+/urkataster/libs/
+/urkataster/logs/
+/urkataster/__pycache__/
+*.pyc
+.cache
+.vscode
