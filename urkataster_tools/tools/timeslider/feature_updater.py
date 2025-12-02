@@ -38,15 +38,24 @@ class FeatureUpdater(QObject):
         from_field = self.GESICHERT_AB_FIELD if gesichert else self.VERMUTLICH_AB_FIELD
         to_field = self.GESICHERT_BIS_FIELD if gesichert else self.VERMUTLICH_BIS_FIELD
 
-
         date_str = date.toString("yyyy-MM-dd")
         for layer in QgsProject.instance().mapLayers().values():
             if layer.type() == QgsMapLayer.VectorLayer:
                 if layer.fields().indexFromName(from_field) != -1 and layer.fields().indexFromName(to_field) != -1:
-                    layer.setSubsetString("({from_date} IS NULL OR {from_date} <= '{date}') AND ({to_date} IS NULL OR {to_date} >= '{date}')".format(from_date=from_field, to_date=to_field, date=date_str))
-        
+                    self._apply_filter(layer, date_str, from_field, to_field)
         self.iface.messageBar().pushInfo("Urkataster Timeslider", "Layers updated for date: {}".format(date_str))   
 
+    def _apply_filter(self, layer, date_str, from_field, to_field):
+        subset_string ="({from_date} IS NULL OR {from_date} <= '{date}') AND ({to_date} IS NULL OR {to_date} >= '{date}')".format(from_date=from_field, to_date=to_field, date=date_str)
+        # if it's a referenzobjekt layer, we filter as well for the art (type)
+        if layer.name() == "Referenzobjekt (Gebäude)":
+            subset_string += " AND (art = 'gebaeude')"
+        elif layer.name() == 'Referenzobjekt (Parzelle)':
+            subset_string += " AND (art = 'parzelle')"
+        elif layer.name() == 'Referenzobjekt (Adresse)':
+            subset_string += " AND (art = 'adresse')"
+        layer.setSubsetString(subset_string)
+        
     def clear_filters(self):
         """
         Filter all vector layers in the project based on the given date and gesichert flag.
@@ -58,6 +67,13 @@ class FeatureUpdater(QObject):
 
         for layer in QgsProject.instance().mapLayers().values():
             if layer.type() == QgsMapLayer.VectorLayer:
-                layer.setSubsetString("")
+                if layer.name() == "Referenzobjekt (Gebäude)":
+                    layer.setSubsetString("(art = 'gebaeude')")
+                elif layer.name() == 'Referenzobjekt (Parzelle)':
+                    layer.setSubsetString(" (art = 'parzelle')")
+                elif layer.name() == 'Referenzobjekt (Adresse)':
+                    layer.setSubsetString(" (art = 'adresse')")
+                else:
+                    layer.setSubsetString("")
         
         self.iface.messageBar().pushInfo("Urkataster Timeslider", "Layers filter removed")   
