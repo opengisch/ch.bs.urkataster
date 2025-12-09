@@ -24,7 +24,7 @@ erDiagram
         DATE gesichert_ab
         DATE gesichert_bis
         DATE vermutlich_bis
-        UUID eid
+        TEXT eid
         INTEGER idkantonal
         TEXT sektionparzelle
         INTEGER indexparzelle
