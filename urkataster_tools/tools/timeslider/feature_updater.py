@@ -46,7 +46,7 @@ class FeatureUpdater(QObject):
         self.iface.messageBar().pushInfo("Urkataster Timeslider", "Layers updated for date: {}".format(date_str))   
 
     def _apply_filter(self, layer, date_str, from_field, to_field):
-        subset_string ="({from_date} IS NULL OR {from_date} <= '{date}') AND ({to_date} IS NULL OR {to_date} >= '{date}')".format(from_date=from_field, to_date=to_field, date=date_str)
+        subset_string ="({from_date} IS NULL OR {from_date} <= '{date}') AND ({to_date} IS NULL OR '{date}' <= {to_date})".format(from_date=from_field, to_date=to_field, date=date_str)
         # if it's a referenzobjekt layer, we filter as well for the art (type)
         if layer.name() == "Referenzobjekt (Gebäude)":
             subset_string += " AND (art = 'gebaeude')"
