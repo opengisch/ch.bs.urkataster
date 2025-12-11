@@ -14,7 +14,7 @@ CREATE TABLE referenzobjekt (
     vermutlich_ab DATE,
     gesichert_ab DATE,
     gesichert_bis DATE,
-    vermutlich_bis DATE,.
+    vermutlich_bis DATE,
     eid TEXT, -- EGID, EGRID, EGAID 
     idkantonal INTEGER, -- kantonale Gebäude, Parzelle, Eimgangs Nummer
     sektionparzelle TEXT,
