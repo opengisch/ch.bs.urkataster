@@ -15,7 +15,8 @@ CREATE TABLE referenzobjekt (
     gesichert_ab DATE,
     gesichert_bis DATE,
     vermutlich_bis DATE,
-    eid TEXT, -- EGID, EGRID, EGAID 
+    bezeichnung TEXT, -- soll übergreiffender Name oder Nummer des betreffenden Objekts sein (z.B. Gebäudename, Parzellennummer, Adressbezeichnung) für alle Geometrien und Attribute
+    eid TEXT, -- EGID, EGRID, EGAID
     idkantonal INTEGER, -- kantonale Gebäude, Parzelle, Eimgangs Nummer
     sektionparzelle TEXT,
     indexparzelle INTEGER,
@@ -28,7 +29,7 @@ CREATE TABLE referenzobjekt (
 
 CREATE TABLE gebaeude_geometrie (
     id_gebaeude_geometrie UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    fk_referenzobjekt UUID NOT NULL REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE,
+    fk_referenzobjekt UUID NOT NULL REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors) 
     geom geometry(MultiPolygonZ, 2056),
     quelle TEXT,
     genauigkeit_raeumlich TEXT,
@@ -43,7 +44,7 @@ CREATE TABLE gebaeude_geometrie (
 
 CREATE TABLE parzelle_geometrie (
     id_parzelle_geometrie UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    fk_referenzobjekt UUID NOT NULL  REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE,
+    fk_referenzobjekt UUID NOT NULL  REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
     geom geometry(MultiPolygonZ, 2056),
     quelle TEXT,
     genauigkeit_raeumlich TEXT,
@@ -58,7 +59,7 @@ CREATE TABLE parzelle_geometrie (
 
 CREATE TABLE adresse_geometrie (
     id_adresse_geometrie UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    fk_referenzobjekt UUID NOT NULL  REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE,
+    fk_referenzobjekt UUID NOT NULL  REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
     geom geometry(PointZ, 2056),
     quelle TEXT,
     genauigkeit_raeumlich TEXT,
@@ -75,7 +76,7 @@ CREATE TABLE adresse_geometrie (
 
 CREATE TABLE gebaeude_attribute (
     id_gebaeude_attribute UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    fk_referenzobjekt UUID NOT NULL  REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE,
+    fk_referenzobjekt UUID NOT NULL  REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
     name TEXT,
     nutzung TEXT,
     stockwerke INTEGER,
@@ -94,7 +95,7 @@ CREATE TABLE gebaeude_attribute (
 
 CREATE TABLE parzelle_attribute (
     id_parzelle_attribute UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    fk_referenzobjekt UUID NOT NULL REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE,
+    fk_referenzobjekt UUID NOT NULL REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
     nummer TEXT,
     sektion TEXT,
     parzellenindex TEXT,
@@ -111,7 +112,7 @@ CREATE TABLE parzelle_attribute (
 
 CREATE TABLE adresse_attribute (
     id_adresse_attribute UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    fk_referenzobjekt UUID NOT NULL REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE,
+    fk_referenzobjekt UUID NOT NULL REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
     adresssystem TEXT,
     bezeichnung TEXT,
     hausnummer TEXT,
@@ -132,20 +133,20 @@ CREATE TABLE adresse_attribute (
 CREATE TABLE quelldaten (
     id_quelldaten UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     -- FKs nullable, because it's not linked to all tables
-    fk_gebaeude_geometrie UUID REFERENCES gebaeude_geometrie(id_gebaeude_geometrie) ON DELETE SET NULL,
-    fk_adresse_geometrie UUID REFERENCES adresse_geometrie(id_adresse_geometrie) ON DELETE SET NULL,
-    fk_parzelle_geometrie UUID REFERENCES parzelle_geometrie(id_parzelle_geometrie) ON DELETE SET NULL,
-    fk_gebaeude_attribute UUID REFERENCES gebaeude_attribute(id_gebaeude_attribute) ON DELETE SET NULL,
-    fk_parzelle_attribute UUID REFERENCES parzelle_attribute(id_parzelle_attribute) ON DELETE SET NULL,
-    fk_adresse_attribute UUID REFERENCES adresse_attribute(id_adresse_attribute) ON DELETE SET NULL,
+    fk_gebaeude_geometrie UUID NULL REFERENCES gebaeude_geometrie(id_gebaeude_geometrie) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
+    fk_adresse_geometrie UUID NULL REFERENCES adresse_geometrie(id_adresse_geometrie) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
+    fk_parzelle_geometrie UUID NULL REFERENCES parzelle_geometrie(id_parzelle_geometrie) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
+    fk_gebaeude_attribute UUID NULL REFERENCES gebaeude_attribute(id_gebaeude_attribute) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
+    fk_parzelle_attribute UUID NULL REFERENCES parzelle_attribute(id_parzelle_attribute) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
+    fk_adresse_attribute UUID NULL REFERENCES adresse_attribute(id_adresse_attribute) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
     name TEXT,
     beschreibung TEXT,
     pfad TEXT
 );
 
 CREATE TABLE vorgaenger (
-    fk_vorgaenger_referenzobjekt UUID NOT NULL  REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE,
-    fk_nachfolger_referenzobjekt UUID NOT NULL  REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE,
+    fk_vorgaenger_referenzobjekt UUID NOT NULL  REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
+    fk_nachfolger_referenzobjekt UUID NOT NULL  REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
     PRIMARY KEY (fk_vorgaenger_referenzobjekt, fk_nachfolger_referenzobjekt),
     CHECK (fk_vorgaenger_referenzobjekt <> fk_nachfolger_referenzobjekt) -- prevent self-references
 );

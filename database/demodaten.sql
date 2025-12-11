@@ -49,8 +49,8 @@ BEGIN
         ref_ges_end   := GREATEST(ref_ges_start, ref_ver_end - (random() * 365 * 5)::integer);
 
         -- Referenzobjekt erstellen
-        INSERT INTO referenzobjekt (art, gesichert_ab, gesichert_bis, vermutlich_ab, vermutlich_bis, created, modified, modified_by) 
-        VALUES (cur_art, ref_ges_start, ref_ges_end, ref_ver_start, ref_ver_end, now(), now(), 'generator_v2') 
+        INSERT INTO referenzobjekt (art, gesichert_ab, gesichert_bis, vermutlich_ab, vermutlich_bis, eid, created, modified, modified_by) 
+        VALUES (cur_art, ref_ges_start, ref_ges_end, ref_ver_start, ref_ver_end, (random() * 100001)::int, now(), now(), 'generator_v2') 
         RETURNING id_referenzobjekt INTO ref_id;
 
         children_created := 0;

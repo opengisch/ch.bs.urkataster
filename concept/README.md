@@ -59,6 +59,12 @@ Der fk_vorgaenger referenziert auf das Vorgänger RO. Das heisst es bräuchte ei
 
 Wird im Moment davon abgesehen.
 
+### EID wird TEXT
+
+### Bezeichung auf Referenzobjekt
+
+Da zBs. ein Gebäudename auf Gebäude Attribute nur für eine bestimmte Zeit stimmt (und es kann ja merhere pro Referenzobjekt haben).
+
 #### Modellierung
 Mit Vererbungen sähe es so aus:
 
