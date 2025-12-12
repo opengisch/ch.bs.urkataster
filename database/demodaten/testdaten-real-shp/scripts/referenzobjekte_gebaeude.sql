@@ -20,3 +20,19 @@ WHERE taker.id_gebaeude_geometrie > giver.id_gebaeude_geometrie
 -- lösche alle referenzobjekte ohne geometrien
 DELETE FROM referenzobjekt
 WHERE art='gebaeude' and id_referenzobjekt NOT IN (SELECT DISTINCT fk_referenzobjekt FROM gebaeude_geometrie);
+
+-- setzt von bis gesichert für das referenzobjekt gemäss den geometrien
+UPDATE referenzobjekt ro
+SET 
+    gesichert_ab = g.min_ab,
+    gesichert_bis = g.max_bis
+FROM (
+    SELECT 
+        fk_referenzobjekt,
+        MIN(gesichert_ab) AS min_ab,
+        MAX(gesichert_bis) AS max_bis
+    FROM gebaeude_geometrie
+    WHERE fk_referenzobjekt IS NOT NULL
+    GROUP BY fk_referenzobjekt
+) g
+WHERE ro.id_referenzobjekt = g.fk_referenzobjekt;
