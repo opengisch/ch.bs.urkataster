@@ -6,11 +6,6 @@
 psql -h localhost -p 54322 -U docker -d gis -f create_schema.sql
 ```
 
-## Erstelle Demodaten
-```bash
-psql -h localhost -p 54322 -U docker -d gis -f demodaten.sql
-```
-
 ## Datenmodell
 
 ```mermaid
@@ -174,4 +169,46 @@ erDiagram
     gebaeude_attribute ||--o{ quelldaten : ""
     adresse_attribute ||--o{ quelldaten : ""
     parzelle_attribute ||--o{ quelldaten : ""
+```
+
+
+## Erstelle Demodaten
+
+### Generated Data 
+
+Erstellt einfach Random Daten irgendwo (für Lasttest evtl.)
+
+```bash
+psql -h localhost -p 54322 -U docker -d gis -f demodaten/demodaten-generated.sql
+```
+
+### Realdaten
+
+Beispieldatensatz erhalten von Andreas in demodaten/testdaten-real-shp
+
+Was ich gemacht habe um es zu importieren. Es gibt 3 Graphical Modelle im Projekt.
+
+1. Fixe Dummy-Referenzobjekte erstellt für alle Typen (schreibe dummy in bezeichnung)
+2. Die UUIDs in Modell statisch als FK eingetragen beim Refactor Algorithmus
+3. Modelle ausgeführt
+4. Script ausgeführt, um die Referenzobjekte zu erstellen anhand von Überschneidungen (für Gebäude)
+    ```bash
+    psql -h localhost -p 54322 -U docker -d gis -f demodaten/testdaten-real-shp/scripts/referenzobjekte_gebaeude.sql
+    ```
+5. Script ausgeführt, um die Referenzobjekte zu erstellen pro Adresse (auch wenn nicht optimal)
+    ```bash
+    psql -h localhost -p 54322 -U docker -d gis -f demodaten/testdaten-real-shp/scripts/referenzobjekte_gebaeude.sql
+    ```
+6. Script ausgeführt, um genau ein Referenzobjekt zu erstellen pro Parzelle und die ParzNr (die in quelle drin ist) übernommen
+    ```bash
+    psql -h localhost -p 54322 -U docker -d gis -f demodaten/testdaten-real-shp/scripts/referenzobjekte_parzellen.sql
+    ```
+7. Dummy-Referenzobjekte gelöscht
+8. Da in quelle der parzelle_geometrien und in bezeichnung der referenzobjekte mapping info reingeschrieben wuren, kann das noch bereinigt werden
+
+### Realdaten mit SQL Dump
+
+Für erneutes erstellen, dump importieren.
+```
+psql -h localhost -p 54322 -U docker -d gis -f demodaten/testdaten-real-shp/dump/data-dump.sql
 ```
