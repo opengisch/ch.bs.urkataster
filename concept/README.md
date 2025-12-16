@@ -10,11 +10,21 @@
 
 Siehe [hier](../database/README.md)
 
+### Datumsfelder und Geometrie des Referenzobjekt
+
+Die Datumsfelder des Referenzbojekts sollen eigentlich den Minimal- und Maximal-Werten der Child-Objekte entsprechen. Ebenso wäre eine Geometrie des Referenzobjekt (das die Geometrien der Child-Objekte zusammenfasst) hilfreich, um die Referenzobjekte geometrisch (visuell) verlinken zu können.
+- View auf QGIS: unschön, da man die Erfassung auf einem anderen Layer machen muss
+- Generated Columns auf Referenzobjekt: nicht möglich, da dies nur für Kalkulationen innerhalb der Tabelle geht
+- View: U.U. inperformant und...
+- Materialized View: ... ohne INSTEAD OF kann nicht geupdated werden
+- Triggerfunktion: Halt triggerfunktion, ansonsten aber stabil...
+Deshalb entschieden wir uns für die Triggerfunktion. Das bedeutet es gibt noch ein Geometriefeld auf dem Referenzobjekt. Bedeuted zwei, damit wir eine stabilere Lösung haben (Punkt für Adresse und Polygon für Adresse).
+
 ### Änderung der Kardinalität
 
 Die Kardinalität ist im ERM des Konzepts zwischen den Geometrie- oder auch Attributobjekten zu Referenzobjekte ist 0..1 zu 1, währenddem in der Studie einerseits eine 1 zu n Beziehung beschrieben ist (6.4.1). Dies ist wird ebenso mit den Lebenszyklen impliziert (6.3.3) Bei Gebäude und auch Adressen "Solange sich die Lage der Adresse auf denselben Gebäudeeingang bezieht und sich nur geringfügig verändert, sollte das Referenzobjekt bestehen bleiben." Denn da sollen ja wohl noch beide Punkte erfasst bleiben. Bei Parzellen wurde ebenfalls diese Systematik appliziert, auch wenn es evtl. meistens nur eine Parzelle pro Referenzobjekt hat.
 
-Ebenso wurde das Referenzobjekt optional. Auch wenn thematisch jede Geometrie oder jedes Attributset zu einem Referenzobjekt gehört, würde ansonsten die Datennachführung verunmöglicht werden, da momentan erst Geometrien ohne Referenzobjekte existieren.
+Ebenso wurde das Referenzobjekt optional. Auch wenn thematisch jede Geometrie oder jedes Attributset zu einem Referenzobjekt gehört, würde ansonsten die Datennachführung verunmöglicht werden, da momentan erst Geometrien ohne Referenzobjekte existieren. UPDATE: Wurde wieder entfernt. Nicht optional: Bei Neuerstellung der Geometrie soll halt auch immer ein Referenzobjekt dazu erstellt werden. Und beim Import sollen pro Geometrie ein Referenzobjekt erstellt werden.
 
 ### Datenquellen (Raster)
 

@@ -15,15 +15,17 @@ erDiagram
     referenzobjekt {
         UUID id_referenzobjekt PK
         TEXT art
-        DATE vermutlich_ab
-        DATE gesichert_ab
-        DATE gesichert_bis
-        DATE vermutlich_bis
         TEXT bezeichnung
         TEXT eid
         INTEGER idkantonal
         TEXT sektionparzelle
         INTEGER indexparzelle
+        DATE vermutlich_ab
+        DATE gesichert_ab
+        DATE gesichert_bis
+        DATE vermutlich_bis
+        MultPolygonZ polygongeom
+        PointZ pointgeom
         TIMESTAMP created
         TIMESTAMP modified
         TEXT modified_by
@@ -152,12 +154,12 @@ erDiagram
     %% --- BEZIEHUNGEN ---
     
     %% Referenzobjekt besitzt Geometrien und Attribute
-    referenzobjekt |o--o{ gebaeude_geometrie : "has"
-    referenzobjekt |o--o{ adresse_geometrie : "has"
-    referenzobjekt |o--o{ parzelle_geometrie : "has"
-    referenzobjekt |o--o{ gebaeude_attribute : "has"
-    referenzobjekt |o--o{ adresse_attribute : "has"
-    referenzobjekt |o--o{ parzelle_attribute : "has"
+    referenzobjekt ||--o{ gebaeude_geometrie : "has"
+    referenzobjekt ||--o{ adresse_geometrie : "has"
+    referenzobjekt ||--o{ parzelle_geometrie : "has"
+    referenzobjekt ||--o{ gebaeude_attribute : "has"
+    referenzobjekt ||--o{ adresse_attribute : "has"
+    referenzobjekt ||--o{ parzelle_attribute : "has"
 
     referenzobjekt }o--o{ vorgaenger : "has"
     referenzobjekt o|--o{ vorgaenger : "has"
@@ -170,7 +172,25 @@ erDiagram
     adresse_attribute ||--o{ quelldaten : ""
     parzelle_attribute ||--o{ quelldaten : ""
 ```
+### Triggerfunktion
 
+Wenn ein Feld vermutlich_ab, vermutlich_bis, gesichert_ab, gesichert_bis in...
+... gebaeude_geometrie oder ...
+... adresse_geometrie oder ...
+... parzelle_geometrie oder ...
+... gebaeude_attribute oder ...
+... adresse_attribute oder ...
+... parzelle_attribute ...
+... angepasst (oder auch ein neues Objekt hinzugefügt) wird, dann passe auch den Parent referenzobjekt (fk_referenzobjekt) die gleichnamigen Datumswerte anhand Maximum und Minimum der Children an.
+
+Wenn ...
+... gebaeude_geometrie oder ...
+... parzelle_geometrie ...
+... in Geometrie angepasst (oder auch ein neues Objekt hinzugefügt) wird, dann passe auch den Parent referenzobjekt in polygeom an, damit es alle Geometrien der Children als ST_Multi(ST_Union vereint.
+
+Wenn ...
+... adresse_geometrie ...
+... in Geometrie angepasst (oder auch ein neues Objekt hinzugefügt) wird, dann passe auch den Parent referenzobjekt in pointgeom an, damit es alle Geometrien der Children als ST_Multi(ST_Union vereint.
 
 ## Erstelle Demodaten
 
@@ -209,6 +229,6 @@ Was ich gemacht habe um es zu importieren. Es gibt 3 Graphical Modelle im Projek
 ### Realdaten mit SQL Dump
 
 Für erneutes erstellen, dump importieren.
-```
+```bash
 psql -h localhost -p 54322 -U docker -d gis -f demodaten/testdaten-real-shp/dump/data-dump.sql
 ```
