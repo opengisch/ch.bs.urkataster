@@ -27,7 +27,7 @@ class FeatureUpdater(QObject):
         super().__init__()
         self.iface = iface
 
-    def filter_layers(self, date: QDate, gesichert: bool):
+    def filter_layers(self, date: QDate, to_date: QDate, gesichert: bool):
         """
         Filter all vector layers in the project based on the given date and gesichert flag.
         
