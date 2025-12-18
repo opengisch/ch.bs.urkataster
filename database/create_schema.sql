@@ -27,6 +27,84 @@ CREATE TABLE referenzobjekt (
     modified_by TEXT
 );
 
+-- ... annd Referenzobjekt Triggers
+
+-- on insert (falls schon Child Objekte bestehen)
+CREATE OR REPLACE FUNCTION triggerfunction_collect_children_values_on_insert_referenzobjekt() 
+RETURNS TRIGGER AS $$
+BEGIN
+    -- for gebaeude
+    IF (NEW.art = 'gebaeude') THEN
+        -- get the dates
+        WITH all_dates AS (
+            SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.gebaeude_geometrie WHERE fk_referenzobjekt = NEW.id_referenzobjekt
+            UNION ALL 
+            SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.gebaeude_attribute WHERE fk_referenzobjekt = NEW.id_referenzobjekt
+        )
+        SELECT 
+            MIN(vermutlich_ab), MIN(gesichert_ab), MAX(gesichert_bis), MAX(vermutlich_bis)
+        INTO 
+            NEW.vermutlich_ab, NEW.gesichert_ab, NEW.gesichert_bis, NEW.vermutlich_bis
+        FROM all_dates;
+
+        -- get the geometries
+        NEW.polygongeom := (
+            SELECT public.ST_Multi(public.ST_Union(geom))::public.geometry(MultiPolygonZ, 2056)
+            FROM urkataster.gebaeude_geometrie 
+            WHERE fk_referenzobjekt = NEW.id_referenzobjekt
+        );
+    END IF;
+
+    -- for parzelle
+    IF (NEW.art = 'parzelle') THEN
+        -- get the dates
+        WITH all_dates AS (
+            SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.parzelle_geometrie WHERE fk_referenzobjekt = NEW.id_referenzobjekt
+            UNION ALL 
+            SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.parzelle_attribute WHERE fk_referenzobjekt = NEW.id_referenzobjekt
+        )
+        SELECT 
+            MIN(vermutlich_ab), MIN(gesichert_ab), MAX(gesichert_bis), MAX(vermutlich_bis)
+        INTO 
+            NEW.vermutlich_ab, NEW.gesichert_ab, NEW.gesichert_bis, NEW.vermutlich_bis
+        FROM all_dates;
+
+        -- get the geometries
+        NEW.polygongeom := (
+            SELECT public.ST_Multi(public.ST_Union(geom))::public.geometry(MultiPolygonZ, 2056)
+            FROM urkataster.parzelle_geometrie 
+            WHERE fk_referenzobjekt = NEW.id_referenzobjekt
+        );
+    END IF;
+    RETURN NEW;
+
+    -- for adresse
+    IF (NEW.art = 'adresse') THEN
+        -- get the dates
+        WITH all_dates AS (
+            SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.adresse_geometrie WHERE fk_referenzobjekt = NEW.id_referenzobjekt
+            UNION ALL 
+            SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.adresse_attribute WHERE fk_referenzobjekt = NEW.id_referenzobjekt
+        )
+        SELECT 
+            MIN(vermutlich_ab), MIN(gesichert_ab), MAX(gesichert_bis), MAX(vermutlich_bis)
+        INTO 
+            NEW.vermutlich_ab, NEW.gesichert_ab, NEW.gesichert_bis, NEW.vermutlich_bis
+        FROM all_dates;
+
+        -- get the geometries
+        NEW.polygongeom := (
+            SELECT public.ST_Multi(public.ST_Union(geom))::public.geometry(MultiPointZ, 2056)
+            FROM urkataster.adresse_geometrie 
+            WHERE fk_referenzobjekt = NEW.id_referenzobjekt
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_referenzobjekt_insert BEFORE INSERT ON urkataster.referenzobjekt FOR EACH ROW EXECUTE FUNCTION triggerfunction_collect_children_values_on_insert_referenzobjekt();
+
 -- Create Gebaeude Tables
 
 CREATE TABLE gebaeude_geometrie (
@@ -158,7 +236,7 @@ BEGIN
     LOOP
         UPDATE urkataster.referenzobjekt SET 
             polygongeom = (
-                SELECT ST_Multi(ST_Union(geom))::geometry(MultiPolygonZ, 2056)
+                SELECT public.ST_Multi(public.ST_Union(geom))::public.geometry(MultiPolygonZ, 2056)
                 FROM urkataster.gebaeude_geometrie WHERE fk_referenzobjekt = v_id
             ),
             modified = now(),
@@ -300,7 +378,7 @@ BEGIN
     LOOP
         UPDATE urkataster.referenzobjekt SET 
             polygongeom = (
-                SELECT ST_Multi(ST_Union(geom))::geometry(MultiPolygonZ, 2056)
+                SELECT public.ST_Multi(public.ST_Union(geom))::public.geometry(MultiPolygonZ, 2056)
                 FROM urkataster.parzelle_geometrie WHERE fk_referenzobjekt = v_id
             ),
             modified = now(),
@@ -443,7 +521,7 @@ BEGIN
     LOOP
         UPDATE urkataster.referenzobjekt SET 
             pointgeom = (
-                SELECT ST_Multi(ST_Union(geom))::geometry(MultiPointZ, 2056)
+                SELECT public.ST_Multi(public.ST_Union(geom))::public.geometry(MultiPointZ, 2056)
                 FROM urkataster.adresse_geometrie WHERE fk_referenzobjekt = v_id
             ),
             modified = now(),
