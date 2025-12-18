@@ -49,7 +49,6 @@ class UrkatasterToolsPlugin(QObject):
         self._timeslider.trigger_clear.connect(self._feature_updater.clear_filters)
 
     def unload(self):
-        
         self._timeslider_toolbar.removeAction(self._timeslider_action)
         del self._timeslider_action
         del self._feature_updater

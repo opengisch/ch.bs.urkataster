@@ -27,7 +27,7 @@ class FeatureUpdater(QObject):
         super().__init__()
         self.iface = iface
 
-    def filter_layers(self, date: QDate, to_date: QDate, gesichert: bool):
+    def filter_layers(self, filter_from_date: QDate, filter_to_date: QDate, gesichert: bool):
         """
         Filter all vector layers in the project based on the given date and gesichert flag.
         
@@ -38,15 +38,16 @@ class FeatureUpdater(QObject):
         from_field = self.GESICHERT_AB_FIELD if gesichert else self.VERMUTLICH_AB_FIELD
         to_field = self.GESICHERT_BIS_FIELD if gesichert else self.VERMUTLICH_BIS_FIELD
 
-        date_str = date.toString("yyyy-MM-dd")
+        filter_from_date_str = filter_from_date.toString("yyyy-MM-dd")
+        filter_to_date_str = filter_to_date.toString("yyyy-MM-dd")
         for layer in QgsProject.instance().mapLayers().values():
             if layer.type() == QgsMapLayer.VectorLayer:
                 if layer.fields().indexFromName(from_field) != -1 and layer.fields().indexFromName(to_field) != -1:
-                    self._apply_filter(layer, date_str, from_field, to_field)
-        self.iface.messageBar().pushInfo("Urkataster Timeslider", "Layers updated for date: {}".format(date_str))   
+                    self._apply_filter(layer, filter_from_date_str, filter_to_date_str, from_field, to_field)
+        self.iface.mainWindow().statusBar().showMessage("Layers updated from {} untill {}".format(filter_from_date_str, filter_to_date_str))
 
-    def _apply_filter(self, layer, date_str, from_field, to_field):
-        subset_string ="({from_date} IS NULL OR {from_date} <= '{date}') AND ({to_date} IS NULL OR '{date}' <= {to_date})".format(from_date=from_field, to_date=to_field, date=date_str)
+    def _apply_filter(self, layer, filter_from_date_str, filter_to_date_str, from_field, to_field):
+        subset_string ="({from_date} IS NULL OR {from_date} <= '{filter_to_date}') AND ({to_date} IS NULL OR '{filter_from_date}' <= {to_date})".format(from_date=from_field, to_date=to_field, filter_from_date=filter_from_date_str, filter_to_date = filter_to_date_str)
         # if it's a referenzobjekt layer, we filter as well for the art (type)
         if layer.name() == "Referenzobjekt (Gebäude)":
             subset_string += " AND (art = 'gebaeude')"
