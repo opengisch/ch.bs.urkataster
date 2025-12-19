@@ -21,6 +21,8 @@ from qgis.PyQt.QtCore import QDir, QFileInfo, QObject, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
+from qgis.core import QgsProject, QgsMapLayer, QgsApplication
+
 from urkataster_tools.tools.timeslider.timeslider_widget import TimesliderWidget
 from urkataster_tools.tools.timeslider.feature_updater import FeatureUpdater
 
@@ -35,25 +37,35 @@ class UrkatasterToolsPlugin(QObject):
         self.logs_directory = "{}/logs".format(pathlib.Path(__file__).parent.absolute())
         self.init_logger()
 
-        # timeslider toolbar
-        self._timeslider_toolbar = self.iface.addToolBar(self.tr("Urkataster Timeslider"))
-        self._timeslider_toolbar.setObjectName("UrkatasterTimesliderToolbar")
-        self._timeslider_toolbar.setToolTip(self.tr("Urkataster Timeslider"))
+        # toolbar
+        self._urkataster_toolbar = self.iface.addToolBar("Urkataster Tools")
+        self._urkataster_toolbar.setObjectName("UrkatasterToolbar")
+        self._urkataster_toolbar.setToolTip("Tools zur Arbeit mit dem BS Urkataster")
+
+        # open the urkataster project
+        self._open_project_action = QAction(
+            QgsApplication.getThemeIcon("/mIconQgsProjectFile.svg"),
+            "Öffne das Urkataster Projekt",
+            None,
+        )
+        self._open_project_action.triggered.connect( self._reopen_project() )
+        self._urkataster_toolbar.addAction(self._open_project_action)
 
         # timeslider widget
         self._timeslider = TimesliderWidget()
         self._feature_updater = FeatureUpdater(self.iface)
-        self._timeslider_action = self._timeslider_toolbar.addWidget(self._timeslider)
-        self._timeslider_action.setToolTip(self.tr("Urkataster Timeslider"))
+        self._timeslider_action = self._urkataster_toolbar.addWidget(self._timeslider)
         self._timeslider.trigger_update.connect(self._feature_updater.filter_layers)
         self._timeslider.trigger_clear.connect(self._feature_updater.clear_filters)
 
     def unload(self):
-        self._timeslider_toolbar.removeAction(self._timeslider_action)
+        self._urkataster_toolbar.removeAction(self._open_project_action)
+        self._urkataster_toolbar.removeAction(self._timeslider_action)
+        del self._open_project_action
         del self._timeslider_action
         del self._feature_updater
         del self._timeslider
-        del self._timeslider_toolbar
+        del self._urkataster_toolbar
 
     def init_logger(self):
         directory = QDir(self.logs_directory)
@@ -76,3 +88,7 @@ class UrkatasterToolsPlugin(QObject):
             self.logger.addHandler(rotationHandler)
 
         self.logger.info("Starting Urkataster tools plugin version")
+
+    def _reopen_project(self, project_file):
+        QgsProject.instance().clear()
+        QgsProject.instance().read(os.path.join(self.plugin_dir, "data/qgis-projects/urkataster.qgz")) 
