@@ -12,7 +12,7 @@ Datenbank UML und Script zum erstellen, sowie ein Testdatendump und Shapefiles f
 
 ## Plugin
 
-Das Plugin, das auch als ZIP gepackaged ist findest du im aktuellen [Relase](https://github.com/opengisch/ch.bs.urkataster/releases/latest) zu downloaden. Der Sourcecode ist [hier](urkataster-tools/)
+Das Plugin, das auch als ZIP gepackaged ist findest du im aktuellen [Release](https://github.com/opengisch/ch.bs.urkataster/releases/latest) zu downloaden. Der Sourcecode ist [hier](urkataster-tools/)
 
 Das QGIS Projekt als Bestandteil des Plugins ist in  [urkataster-tools/data/qgis-project/](urkataster-tools/data/qgis-project/) abgelegt.
 
