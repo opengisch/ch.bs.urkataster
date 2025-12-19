@@ -1,0 +1,24 @@
+version: '3'
+services:
+  postgres:
+    image: postgis/postgis:15-3.4-alpine
+    environment:
+      - ALLOW_IP_RANGE="172.0.0.0/8"
+      - "POSTGRES_PASSWORD=docker"
+      - "POSTGRES_USER=docker"
+      - "POSTGRES_DB=lksob"
+
+  qgis:
+    build:
+      context: ..
+      dockerfile: ./.docker/Dockerfile
+      args:
+        QGIS_TEST_VERSION: ${QGIS_TEST_VERSION}
+    tty: true
+    environment:
+      - "PGSERVICEFILE=/etc/postgresql-common/pg_service.conf"
+    volumes:
+      - ${GITHUB_WORKSPACE}:/usr/src
+      - ./.pg_service.conf:/etc/postgresql-common/pg_service.conf:ro
+    links:
+      - postgres

@@ -12,24 +12,21 @@ on:
     types: [released]
 
 jobs:
-  # test:
-  #   runs-on: ubuntu-22.04
-  #   strategy:
-  #     fail-fast: false  # keep for now, since 3.28 have different bases than 3.34+
-  #     matrix:
-  #       qgis_version: ['release-3_28', '3.34', '3.40', 'latest']
-  #   env:
-  #     QGIS_TEST_VERSION: ${{ matrix.qgis_version }}
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
-  #       with:
-  #         submodules: recursive
-  #     - name: Package PyPI Packages
-  #       run: |
-  #         sudo ./scripts/package_pip_packages.sh
-  #     - name: Test on QGIS
-  #       run: docker compose -f .docker/docker-compose.yml run -e "PGHOST=postgres" qgis /usr/src/.docker/run-docker-tests.sh
+  test:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false  keep for now, since 3.28 have different bases than 3.34+
+      matrix:
+        qgis_version: ['3.40', '3.44', 'latest']
+    env:
+      QGIS_TEST_VERSION: ${{ matrix.qgis_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Test on QGIS
+        run: docker compose -f .docker/docker-compose.yml run -e "PGHOST=postgres" qgis /usr/src/.docker/run-docker-tests.sh
 
   release:
     runs-on: ubuntu-22.04
