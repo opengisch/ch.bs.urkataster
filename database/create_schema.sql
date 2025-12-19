@@ -30,7 +30,7 @@ CREATE TABLE referenzobjekt (
 -- ... annd Referenzobjekt Triggers
 
 -- on insert (falls schon Child Objekte bestehen)
-CREATE OR REPLACE FUNCTION triggerfunction_collect_children_values_on_insert_referenzobjekt() 
+CREATE OR REPLACE FUNCTION triggerfunction_collect_children_values_on_insert_referenzobjekt()
 RETURNS TRIGGER AS $$
 BEGIN
     -- for gebaeude
@@ -38,19 +38,19 @@ BEGIN
         -- get the dates
         WITH all_dates AS (
             SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.gebaeude_geometrie WHERE fk_referenzobjekt = NEW.id_referenzobjekt
-            UNION ALL 
+            UNION ALL
             SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.gebaeude_attribute WHERE fk_referenzobjekt = NEW.id_referenzobjekt
         )
-        SELECT 
+        SELECT
             MIN(vermutlich_ab), MIN(gesichert_ab), MAX(gesichert_bis), MAX(vermutlich_bis)
-        INTO 
+        INTO
             NEW.vermutlich_ab, NEW.gesichert_ab, NEW.gesichert_bis, NEW.vermutlich_bis
         FROM all_dates;
 
         -- get the geometries
         NEW.polygongeom := (
             SELECT public.ST_Multi(public.ST_Union(geom))::public.geometry(MultiPolygonZ, 2056)
-            FROM urkataster.gebaeude_geometrie 
+            FROM urkataster.gebaeude_geometrie
             WHERE fk_referenzobjekt = NEW.id_referenzobjekt
         );
     END IF;
@@ -60,19 +60,19 @@ BEGIN
         -- get the dates
         WITH all_dates AS (
             SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.parzelle_geometrie WHERE fk_referenzobjekt = NEW.id_referenzobjekt
-            UNION ALL 
+            UNION ALL
             SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.parzelle_attribute WHERE fk_referenzobjekt = NEW.id_referenzobjekt
         )
-        SELECT 
+        SELECT
             MIN(vermutlich_ab), MIN(gesichert_ab), MAX(gesichert_bis), MAX(vermutlich_bis)
-        INTO 
+        INTO
             NEW.vermutlich_ab, NEW.gesichert_ab, NEW.gesichert_bis, NEW.vermutlich_bis
         FROM all_dates;
 
         -- get the geometries
         NEW.polygongeom := (
             SELECT public.ST_Multi(public.ST_Union(geom))::public.geometry(MultiPolygonZ, 2056)
-            FROM urkataster.parzelle_geometrie 
+            FROM urkataster.parzelle_geometrie
             WHERE fk_referenzobjekt = NEW.id_referenzobjekt
         );
     END IF;
@@ -83,19 +83,19 @@ BEGIN
         -- get the dates
         WITH all_dates AS (
             SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.adresse_geometrie WHERE fk_referenzobjekt = NEW.id_referenzobjekt
-            UNION ALL 
+            UNION ALL
             SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.adresse_attribute WHERE fk_referenzobjekt = NEW.id_referenzobjekt
         )
-        SELECT 
+        SELECT
             MIN(vermutlich_ab), MIN(gesichert_ab), MAX(gesichert_bis), MAX(vermutlich_bis)
-        INTO 
+        INTO
             NEW.vermutlich_ab, NEW.gesichert_ab, NEW.gesichert_bis, NEW.vermutlich_bis
         FROM all_dates;
 
         -- get the geometries
         NEW.polygongeom := (
             SELECT public.ST_Multi(public.ST_Union(geom))::public.geometry(MultiPointZ, 2056)
-            FROM urkataster.adresse_geometrie 
+            FROM urkataster.adresse_geometrie
             WHERE fk_referenzobjekt = NEW.id_referenzobjekt
         );
     END IF;
@@ -109,7 +109,7 @@ CREATE TRIGGER trigger_referenzobjekt_insert BEFORE INSERT ON urkataster.referen
 
 CREATE TABLE gebaeude_geometrie (
     id_gebaeude_geometrie UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    fk_referenzobjekt UUID NOT NULL REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors) 
+    fk_referenzobjekt UUID NOT NULL REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
     geom geometry(MultiPolygonZ, 2056),
     quelle TEXT,
     genauigkeit_raeumlich TEXT,
@@ -154,9 +154,9 @@ BEGIN
         IF (NEW.vermutlich_ab  IS NOT DISTINCT FROM OLD.vermutlich_ab) AND
            (NEW.gesichert_ab   IS NOT DISTINCT FROM OLD.gesichert_ab) AND
            (NEW.gesichert_bis  IS NOT DISTINCT FROM OLD.gesichert_bis) AND
-           (NEW.vermutlich_bis IS NOT DISTINCT FROM OLD.vermutlich_bis) AND 
+           (NEW.vermutlich_bis IS NOT DISTINCT FROM OLD.vermutlich_bis) AND
            (NEW.fk_referenzobjekt = OLD.fk_referenzobjekt) THEN
-            RETURN NULL; 
+            RETURN NULL;
         END IF;
     END IF;
 
@@ -181,10 +181,10 @@ BEGIN
     LOOP
         WITH all_values AS (
             SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.gebaeude_geometrie WHERE fk_referenzobjekt = v_id
-            UNION ALL 
+            UNION ALL
             SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.gebaeude_attribute WHERE fk_referenzobjekt = v_id
         )
-        UPDATE urkataster.referenzobjekt SET 
+        UPDATE urkataster.referenzobjekt SET
             vermutlich_ab = (SELECT MIN(vermutlich_ab) FROM all_values),
             gesichert_ab  = (SELECT MIN(gesichert_ab)  FROM all_values),
             gesichert_bis = (SELECT MAX(gesichert_bis) FROM all_values),
@@ -211,7 +211,7 @@ BEGIN
     -- Don't do anything when it's an update and neither geometry changed, nor it changed the parent
     IF (TG_OP = 'UPDATE') THEN
         IF (NEW.geom = OLD.geom) AND (NEW.fk_referenzobjekt = OLD.fk_referenzobjekt) THEN
-            RETURN NULL; 
+            RETURN NULL;
         END IF;
     END IF;
 
@@ -234,7 +234,7 @@ BEGIN
     -- Now only update the affected ids (to save performance)
     FOREACH v_id IN ARRAY v_affected_ids
     LOOP
-        UPDATE urkataster.referenzobjekt SET 
+        UPDATE urkataster.referenzobjekt SET
             polygongeom = (
                 SELECT public.ST_Multi(public.ST_Union(geom))::public.geometry(MultiPolygonZ, 2056)
                 FROM urkataster.gebaeude_geometrie WHERE fk_referenzobjekt = v_id
@@ -296,9 +296,9 @@ BEGIN
         IF (NEW.vermutlich_ab  IS NOT DISTINCT FROM OLD.vermutlich_ab) AND
            (NEW.gesichert_ab   IS NOT DISTINCT FROM OLD.gesichert_ab) AND
            (NEW.gesichert_bis  IS NOT DISTINCT FROM OLD.gesichert_bis) AND
-           (NEW.vermutlich_bis IS NOT DISTINCT FROM OLD.vermutlich_bis) AND 
+           (NEW.vermutlich_bis IS NOT DISTINCT FROM OLD.vermutlich_bis) AND
            (NEW.fk_referenzobjekt = OLD.fk_referenzobjekt) THEN
-            RETURN NULL; 
+            RETURN NULL;
         END IF;
     END IF;
 
@@ -323,10 +323,10 @@ BEGIN
     LOOP
         WITH all_values AS (
             SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.parzelle_geometrie WHERE fk_referenzobjekt = v_id
-            UNION ALL 
+            UNION ALL
             SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.parzelle_attribute WHERE fk_referenzobjekt = v_id
         )
-        UPDATE urkataster.referenzobjekt SET 
+        UPDATE urkataster.referenzobjekt SET
             vermutlich_ab = (SELECT MIN(vermutlich_ab) FROM all_values),
             gesichert_ab  = (SELECT MIN(gesichert_ab)  FROM all_values),
             gesichert_bis = (SELECT MAX(gesichert_bis) FROM all_values),
@@ -353,7 +353,7 @@ BEGIN
     -- Don't do anything when it's an update and neither geometry changed, nor it changed the parent
     IF (TG_OP = 'UPDATE') THEN
         IF (NEW.geom = OLD.geom) AND (NEW.fk_referenzobjekt = OLD.fk_referenzobjekt) THEN
-            RETURN NULL; 
+            RETURN NULL;
         END IF;
     END IF;
 
@@ -376,7 +376,7 @@ BEGIN
     -- Now only update the affected ids (to save performance)
     FOREACH v_id IN ARRAY v_affected_ids
     LOOP
-        UPDATE urkataster.referenzobjekt SET 
+        UPDATE urkataster.referenzobjekt SET
             polygongeom = (
                 SELECT public.ST_Multi(public.ST_Union(geom))::public.geometry(MultiPolygonZ, 2056)
                 FROM urkataster.parzelle_geometrie WHERE fk_referenzobjekt = v_id
@@ -439,9 +439,9 @@ BEGIN
         IF (NEW.vermutlich_ab  IS NOT DISTINCT FROM OLD.vermutlich_ab) AND
            (NEW.gesichert_ab   IS NOT DISTINCT FROM OLD.gesichert_ab) AND
            (NEW.gesichert_bis  IS NOT DISTINCT FROM OLD.gesichert_bis) AND
-           (NEW.vermutlich_bis IS NOT DISTINCT FROM OLD.vermutlich_bis) AND 
+           (NEW.vermutlich_bis IS NOT DISTINCT FROM OLD.vermutlich_bis) AND
            (NEW.fk_referenzobjekt = OLD.fk_referenzobjekt) THEN
-            RETURN NULL; 
+            RETURN NULL;
         END IF;
     END IF;
 
@@ -466,10 +466,10 @@ BEGIN
     LOOP
         WITH all_values AS (
             SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.parzelle_geometrie WHERE fk_referenzobjekt = v_id
-            UNION ALL 
+            UNION ALL
             SELECT vermutlich_ab, gesichert_ab, gesichert_bis, vermutlich_bis FROM urkataster.parzelle_attribute WHERE fk_referenzobjekt = v_id
         )
-        UPDATE urkataster.referenzobjekt SET 
+        UPDATE urkataster.referenzobjekt SET
             vermutlich_ab = (SELECT MIN(vermutlich_ab) FROM all_values),
             gesichert_ab  = (SELECT MIN(gesichert_ab)  FROM all_values),
             gesichert_bis = (SELECT MAX(gesichert_bis) FROM all_values),
@@ -496,7 +496,7 @@ BEGIN
     -- Don't do anything when it's an update and neither geometry changed, nor it changed the parent
     IF (TG_OP = 'UPDATE') THEN
         IF (NEW.geom = OLD.geom) AND (NEW.fk_referenzobjekt = OLD.fk_referenzobjekt) THEN
-            RETURN NULL; 
+            RETURN NULL;
         END IF;
     END IF;
 
@@ -519,7 +519,7 @@ BEGIN
     -- Now only update the affected ids (to save performance)
     FOREACH v_id IN ARRAY v_affected_ids
     LOOP
-        UPDATE urkataster.referenzobjekt SET 
+        UPDATE urkataster.referenzobjekt SET
             pointgeom = (
                 SELECT public.ST_Multi(public.ST_Union(geom))::public.geometry(MultiPointZ, 2056)
                 FROM urkataster.adresse_geometrie WHERE fk_referenzobjekt = v_id

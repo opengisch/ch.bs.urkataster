@@ -17,14 +17,13 @@ import logging.handlers
 import os
 import pathlib
 
-from qgis.PyQt.QtCore import QDir, QFileInfo, QObject, Qt
-from qgis.PyQt.QtGui import QIcon
+from qgis.core import QgsApplication, QgsProject
+from qgis.PyQt.QtCore import QDir, QFileInfo, QObject
 from qgis.PyQt.QtWidgets import QAction
 
-from qgis.core import QgsProject, QgsMapLayer, QgsApplication
-
-from urkataster_tools.tools.timeslider.timeslider_widget import TimesliderWidget
 from urkataster_tools.tools.timeslider.feature_updater import FeatureUpdater
+from urkataster_tools.tools.timeslider.timeslider_widget import TimesliderWidget
+
 
 class UrkatasterToolsPlugin(QObject):
     def __init__(self, iface):
@@ -48,7 +47,7 @@ class UrkatasterToolsPlugin(QObject):
             "Öffne das Urkataster Projekt",
             None,
         )
-        self._open_project_action.triggered.connect( self._reopen_project() )
+        self._open_project_action.triggered.connect(self._reopen_project())
         self._urkataster_toolbar.addAction(self._open_project_action)
 
         # timeslider widget
@@ -91,4 +90,4 @@ class UrkatasterToolsPlugin(QObject):
 
     def _reopen_project(self, project_file):
         QgsProject.instance().clear()
-        QgsProject.instance().read(os.path.join(self.plugin_dir, "data/qgis-projects/urkataster.qgz")) 
+        QgsProject.instance().read(os.path.join(self.plugin_dir, "data/qgis-projects/urkataster.qgz"))

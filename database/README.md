@@ -9,7 +9,7 @@ psql -h localhost -p 54322 -U docker -d gis -f create_schema.sql
 ## Datenmodell
 
 ```mermaid
-erDiagram 
+erDiagram
     %% --- HAUPTTABELLEN ---
 
     referenzobjekt {
@@ -46,8 +46,8 @@ erDiagram
         TIMESTAMP created
         TIMESTAMP modified
         TEXT modified_by
-    }    
-    
+    }
+
     gebaeude_attribute {
         UUID id_gebaeude_attribute PK
         UUID fk_referenzobjekt FK
@@ -152,7 +152,7 @@ erDiagram
     }
 
     %% --- BEZIEHUNGEN ---
-    
+
     %% Referenzobjekt besitzt Geometrien und Attribute
     referenzobjekt ||--o{ gebaeude_geometrie : "has"
     referenzobjekt ||--o{ adresse_geometrie : "has"
@@ -198,7 +198,7 @@ Wenn ...
 
 ## Erstelle Demodaten
 
-### Generated Data 
+### Generated Data
 
 Erstellt einfach Random Daten irgendwo (für Lasttest evtl.)
 

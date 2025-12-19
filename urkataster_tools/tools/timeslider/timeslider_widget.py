@@ -11,16 +11,18 @@ License:
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
 """
-from qgis.PyQt.QtCore import Qt, QTimer, QDate, pyqtSignal
-from qgis.PyQt.QtWidgets import QCheckBox, QWidget, QToolButton, QSlider, QHBoxLayout, QLabel, QDateEdit
-from qgis.core import QgsProject, QgsMapLayer, QgsApplication
+
+from qgis.core import QgsApplication
 from qgis.gui import QgsRangeSlider
+from qgis.PyQt.QtCore import QDate, Qt, QTimer, pyqtSignal
+from qgis.PyQt.QtWidgets import QCheckBox, QDateEdit, QHBoxLayout, QToolButton, QWidget
+
 
 class TimesliderWidget(QWidget):
 
     MIN_YEAR = 1600
 
-    trigger_update = pyqtSignal(QDate,QDate, bool)
+    trigger_update = pyqtSignal(QDate, QDate, bool)
     trigger_clear = pyqtSignal()
 
     def __init__(self, parent=None):
@@ -63,15 +65,25 @@ class TimesliderWidget(QWidget):
         self.scheduled_update_timer = QTimer()
         self.scheduled_update_timer.setSingleShot(True)
         self.scheduled_update_timer.timeout.connect(
-            lambda: self.trigger_update.emit(self.start_date.addDays(self.slider.lowerValue()), self.start_date.addDays(self.slider.upperValue()), self.nur_gesichert_checkbox.isChecked())
+            lambda: self.trigger_update.emit(
+                self.start_date.addDays(self.slider.lowerValue()),
+                self.start_date.addDays(self.slider.upperValue()),
+                self.nur_gesichert_checkbox.isChecked(),
+            )
         )
-        self.slider.rangeChanged.connect(lambda: self.scheduled_update_timer.start(100)) # maybe needs 1000 ms delay
-        self.from_date_edit.dateChanged.connect(lambda: self.scheduled_update_timer.start(100)) # maybe needs 1000 ms delay
-        self.to_date_edit.dateChanged.connect(lambda: self.scheduled_update_timer.start(100)) # maybe needs 1000 ms delay
-        self.nur_gesichert_checkbox.stateChanged.connect(lambda: self.scheduled_update_timer.start(100)) # maybe needs 1000 ms delay
+        self.slider.rangeChanged.connect(lambda: self.scheduled_update_timer.start(100))  # maybe needs 1000 ms delay
+        self.from_date_edit.dateChanged.connect(
+            lambda: self.scheduled_update_timer.start(100)
+        )  # maybe needs 1000 ms delay
+        self.to_date_edit.dateChanged.connect(
+            lambda: self.scheduled_update_timer.start(100)
+        )  # maybe needs 1000 ms delay
+        self.nur_gesichert_checkbox.stateChanged.connect(
+            lambda: self.scheduled_update_timer.start(100)
+        )  # maybe needs 1000 ms delay
         self.clear_button.clicked.connect(self._clear)
 
-    def _sync_dates_from_slider(self, lower_val: int, upper_val: int)-> None:
+    def _sync_dates_from_slider(self, lower_val: int, upper_val: int) -> None:
         new_date = self.start_date.addDays(lower_val)
         if self.from_date_edit.date() != new_date:
             self.from_date_edit.blockSignals(True)
@@ -83,21 +95,21 @@ class TimesliderWidget(QWidget):
             self.to_date_edit.setDate(new_date)
             self.to_date_edit.blockSignals(False)
 
-    def _sync_slider_from_from_date(self, date: QDate)-> None:
+    def _sync_slider_from_from_date(self, date: QDate) -> None:
         days = self.start_date.daysTo(date)
         if self.slider.lowerValue() != days:
             self.slider.blockSignals(True)
             self.slider.setLowerValue(days)
             self.slider.blockSignals(False)
 
-    def _sync_slider_from_to_date(self, date: QDate)-> None:
+    def _sync_slider_from_to_date(self, date: QDate) -> None:
         days = self.start_date.daysTo(date)
         if self.slider.upperValue() != days:
             self.slider.blockSignals(True)
             self.slider.setUpperValue(days)
             self.slider.blockSignals(False)
 
-    def _clear(self)-> None:
+    def _clear(self) -> None:
         # reset values
         self.from_date_edit.blockSignals(True)
         self.to_date_edit.blockSignals(True)
