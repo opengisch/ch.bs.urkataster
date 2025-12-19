@@ -4,7 +4,7 @@
 
 ## Konzept
 
-Konzept Daten, Dokumentationen und Überlegungen findest du im Ordner [concept](concept/README.md)
+Konzept, Daten und Überlegungen findest du im Ordner [concept](concept/README.md)
 
 ## Datenbank
 
@@ -12,11 +12,19 @@ Datenbank UML und Script zum erstellen, sowie ein Testdatendump und Shapefiles f
 
 ## Plugin
 
-Das Plugin, das auch als ZIP gepackaged ist findest du in den Relases zum Downloaden. Der Sourcecode ist [hier](urkataster-tools/)
+Das Plugin, das auch als ZIP gepackaged ist findest du im aktuellen [Relase](https://github.com/opengisch/ch.bs.urkataster/releases/latest) zu downloaden. Der Sourcecode ist [hier](urkataster-tools/)
 
 Das QGIS Projekt als Bestandteil des Plugins ist in  [urkataster-tools/data/qgis-project/](urkataster-tools/data/qgis-project/) abgelegt.
 
 Tests betreffen das Plugin und werden bei Pull Requests und Releases automatisch gestartet.
+
+### Setup
+
+Es muss ein PG Service `urkataster` erstellt werden, damit das Projekt auf die Datenbank zugreiffen kann.
+
+## User Guide
+
+Anleitung zum Projekt und Plugin wird [hier](docs/) geführt und kann als PDF hier heruntergeladen werden.
 
 ## Infos for Devs
 

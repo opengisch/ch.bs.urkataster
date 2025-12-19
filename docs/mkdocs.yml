@@ -1,0 +1,61 @@
+# Project information
+site_name: Urkataster Tools
+docs_dir: docs
+
+# Repository
+repo_name: opengisch/quick-md-docs
+repo_url: https://github.com/opengisch/ch.bs.urkataster
+edit_uri: https://github.com/opengisch/ch.bs.urkataster
+
+# Theme configuration
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - search.suggest
+    - search.highlight
+  logo: assets/urkataster-tools-icon.svg
+  favicon: assets/urkataster-tools-icon.svg
+  icon:
+    logo: assets/urkataster-tools-icon.svg
+  palette:
+    - scheme: default
+      primary: green
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: green
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+        primary: white
+
+# Page tree
+nav:
+  - Installation: setup.md
+  - Anleitung: user-guide.md
+
+markdown_extensions:
+  - attr_list
+  - def_list
+  - admonition
+
+plugins:
+  - exporter:
+      formats:
+        pdf:
+          enabled: true
+          stylesheets:
+            - resources/stylesheets/pdf.scss
+          covers:
+            front: resources/templates/covers/front.html.j2
+          aggregator:
+            enabled: true
+            output: all-docs.pdf
+            covers: front
+          browser:
+            debug: false
+  - macros:
+      on_undefined: strict
