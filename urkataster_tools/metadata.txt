@@ -1,6 +1,7 @@
 [general]
 name=Urkataster Tools
-qgisMinimumVersion=3.28
+qgisMinimumVersion=3.40
+qgisMaximumVersion=4.99
 icon=images/urkataster-tools-icon.svg
 description=Tools for BS Urkataster
 about=Tools for BS Urkataster

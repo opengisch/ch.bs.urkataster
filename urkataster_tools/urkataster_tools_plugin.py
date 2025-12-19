@@ -47,7 +47,7 @@ class UrkatasterToolsPlugin(QObject):
             "Öffne das Urkataster Projekt",
             None,
         )
-        self._open_project_action.triggered.connect(self._reopen_project())
+        self._open_project_action.triggered.connect(self._reopen_project)
         self._urkataster_toolbar.addAction(self._open_project_action)
 
         # timeslider widget
@@ -86,8 +86,8 @@ class UrkatasterToolsPlugin(QObject):
             rotationHandler.setFormatter(formatter)
             self.logger.addHandler(rotationHandler)
 
-        self.logger.info("Starting Urkataster tools plugin version")
+        self.logger.info("Starting Urkataster tools plugin")
 
-    def _reopen_project(self, project_file):
+    def _reopen_project(self):
         QgsProject.instance().clear()
-        QgsProject.instance().read(os.path.join(self.plugin_dir, "data/qgis-projects/urkataster.qgz"))
+        QgsProject.instance().read(os.path.join(self.plugin_dir, "data/qgis-project/urkataster.qgz"))

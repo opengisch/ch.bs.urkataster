@@ -45,7 +45,7 @@ class FeatureUpdater(QObject):
                 if layer.fields().indexFromName(from_field) != -1 and layer.fields().indexFromName(to_field) != -1:
                     self._apply_filter(layer, filter_from_date_str, filter_to_date_str, from_field, to_field)
         self.iface.mainWindow().statusBar().showMessage(
-            "Layers updated from {} untill {}".format(filter_from_date_str, filter_to_date_str)
+            "Urkataster Layers Filter gesetzt auf {} bis {}".format(filter_from_date_str, filter_to_date_str)
         )
 
     def _apply_filter(self, layer, filter_from_date_str, filter_to_date_str, from_field, to_field):
@@ -83,5 +83,4 @@ class FeatureUpdater(QObject):
                     layer.setSubsetString(" (art = 'adresse')")
                 else:
                     layer.setSubsetString("")
-
-        self.iface.messageBar().pushInfo("Urkataster Timeslider", "Layers filter removed")
+        self.iface.mainWindow().statusBar().showMessage("Urkataster Layers Filter entfernt.")
