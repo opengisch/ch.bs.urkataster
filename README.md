@@ -1,6 +1,6 @@
 # Urkataster Tools Plugin und QGIS Project
 
-[urkataster-tools-image](urkataster_tools/images/urkataster-tools-icon.svg)
+![urkataster-tools-image](urkataster_tools/images/urkataster-tools-icon.svg)
 
 ## Konzept
 
@@ -14,7 +14,7 @@ Datenbank UML und Script zum erstellen, sowie ein Testdatendump und Shapefiles f
 
 Das Plugin, das auch als ZIP gepackaged ist findest du in den Relases zum Downloaden. Der Sourcecode ist [hier](urkataster-tools/)
 
-Das QGIS Projekt als Bestandteil des Plugins ist in  [urkataster-tools/qgis-project/](urkataster-tools/qgis-project/) abgelegt.
+Das QGIS Projekt als Bestandteil des Plugins ist in  [urkataster-tools/data/qgis-project/](urkataster-tools/data/qgis-project/) abgelegt.
 
 Tests betreffen das Plugin und werden bei Pull Requests und Releases automatisch gestartet.
 
