@@ -2,6 +2,7 @@ __pycache__
 /urkataster_tools/libs/
 /urkataster_tools/logs/
 /urkataster_tools/__pycache__/
+/docs/site/
 *.pyc
 .cache
 .vscode
