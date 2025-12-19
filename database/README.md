@@ -1,5 +1,7 @@
 # Datenbank
 
+Infos zum Datenmodelle und der Datenbank.
+
 ## Erstellen des Schemas
 
 ```bash

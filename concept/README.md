@@ -1,4 +1,6 @@
-# ch.bs.urkataster
+# Konzept und Umsetzung
+
+Dieses Dokument enthält Notizen zur Umsetzung des Projektes.
 
 ## Datenmodell 
 
