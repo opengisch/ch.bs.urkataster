@@ -6,7 +6,7 @@ services:
       - ALLOW_IP_RANGE="172.0.0.0/8"
       - "POSTGRES_PASSWORD=docker"
       - "POSTGRES_USER=docker"
-      - "POSTGRES_DB=lksob"
+      - "POSTGRES_DB=urk"
 
   qgis:
     build:

@@ -25,8 +25,10 @@ class TimesliderWidget(QWidget):
     trigger_update = pyqtSignal(QDate, QDate, bool)
     trigger_clear = pyqtSignal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, delay=100):  # delay should maybe be longer (it's a param for quick tests)
         super().__init__(parent)
+
+        self.delay = delay
 
         self.clear_button = QToolButton()
         self.clear_button.setIcon(QgsApplication.getThemeIcon("/console/iconClearConsole.svg"))
@@ -71,16 +73,10 @@ class TimesliderWidget(QWidget):
                 self.nur_gesichert_checkbox.isChecked(),
             )
         )
-        self.slider.rangeChanged.connect(lambda: self.scheduled_update_timer.start(100))  # maybe needs 1000 ms delay
-        self.from_date_edit.dateChanged.connect(
-            lambda: self.scheduled_update_timer.start(100)
-        )  # maybe needs 1000 ms delay
-        self.to_date_edit.dateChanged.connect(
-            lambda: self.scheduled_update_timer.start(100)
-        )  # maybe needs 1000 ms delay
-        self.nur_gesichert_checkbox.stateChanged.connect(
-            lambda: self.scheduled_update_timer.start(100)
-        )  # maybe needs 1000 ms delay
+        self.slider.rangeChanged.connect(lambda: self.scheduled_update_timer.start(self.delay))
+        self.from_date_edit.dateChanged.connect(lambda: self.scheduled_update_timer.start(self.delay))
+        self.to_date_edit.dateChanged.connect(lambda: self.scheduled_update_timer.start(self.delay))
+        self.nur_gesichert_checkbox.stateChanged.connect(lambda: self.scheduled_update_timer.start(self.delay))
         self.clear_button.clicked.connect(self._clear)
 
     def _sync_dates_from_slider(self, lower_val: int, upper_val: int) -> None:

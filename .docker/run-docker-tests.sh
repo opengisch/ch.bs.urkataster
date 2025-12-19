@@ -17,11 +17,11 @@ pushd /usr/src
 # restore dump for testdata
 echo "Restore test db from dump"
 echo "... add extension uuid-ossp (postgis already in docker)"
-PGPASSWORD='docker' psql -h $PGHOST -U docker -d bstest -c 'CREATE EXTENSION "uuid-ossp";'
+PGPASSWORD='docker' psql -h $PGHOST -U docker -d urk -c 'CREATE EXTENSION "uuid-ossp";'
 echo "... create schema and tables urkataster"
-PGPASSWORD='docker' psql -h $PGHOST -U docker -d bstest -f database/create_schema.sql > /dev/null
+PGPASSWORD='docker' psql -h $PGHOST -U docker -d urk -f database/create_schema.sql > /dev/null
 echo "... import test data"
-PGPASSWORD='docker' psql -h $PGHOST -U docker -d lksob -f tests/testdata/dumps/test-dataset.sql > /dev/null
+PGPASSWORD='docker' psql -h $PGHOST -U docker -d urk -f tests/testdata/dumps/test-dataset.sql > /dev/null
 echo ""
 
 DEFAULT_PARAMS='-v'

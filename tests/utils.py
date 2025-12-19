@@ -14,7 +14,7 @@ def testdata_path(path):
 @pytest.mark.skip("This is a utility function, not a test function")
 def plugindata_path(path):
     basepath = os.path.dirname(os.path.abspath(__file__))
-    pluginpath = os.path.join(basepath, os.pardir, "lksob_perimeter_manager")
+    pluginpath = os.path.join(basepath, os.pardir, "urkataster_tools")
     return os.path.join(pluginpath, "data", path)
 
 
