@@ -21,12 +21,12 @@ theme:
     logo: assets/urkataster-tools-icon.svg
   palette:
     - scheme: default
-      primary: green
+      primary: black
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
     - scheme: slate
-      primary: green
+      primary: black
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
@@ -34,8 +34,9 @@ theme:
 
 # Page tree
 nav:
-  - Installation: setup.md
-  - Anleitung: user-guide.md
+  - Getting started: setup.md
+  - Arbeiten mit dem Urkataster: user-guide.md
+  - Daten Import und Export: importexport.md
 
 markdown_extensions:
   - attr_list

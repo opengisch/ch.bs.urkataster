@@ -52,7 +52,7 @@ class TestTimeslider(unittest.TestCase):
         expected_query = "(art = 'gebaeude')"
         assert refo_layer.subsetString() == expected_query
 
-        self.the_timeslider.nur_gesichert_checkbox.setCheckState(Qt.Checked)
+        self.the_timeslider.nur_gesichert_checkbox.setCheckState(Qt.CheckState.Checked)
         self.the_timeslider.slider.setUpperValue(15000)
         assert self.the_timeslider.to_date_edit.date() == QDate(1641, 1, 25)
 
@@ -108,7 +108,7 @@ class TestTimeslider(unittest.TestCase):
         expected_query = "(gesichert_ab IS NULL OR gesichert_ab <= '1983-09-27') AND (gesichert_bis IS NULL OR '1983-09-27' <= gesichert_bis) AND (art = 'gebaeude')"
         assert refo_layer.subsetString() == expected_query
 
-        self.the_timeslider.nur_gesichert_checkbox.setCheckState(Qt.Unchecked)
+        self.the_timeslider.nur_gesichert_checkbox.setCheckState(Qt.CheckState.Unchecked)
 
         QgsApplication.processEvents()
         geom_layer = QgsProject.instance().mapLayersByName(TestTimeslider.GEB_GEOM_LAYERNAME)[0]

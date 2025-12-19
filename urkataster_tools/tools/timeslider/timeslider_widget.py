@@ -35,7 +35,7 @@ class TimesliderWidget(QWidget):
 
         self.nur_gesichert_checkbox = QCheckBox("Nur gesicherte Daten anzeigen")
 
-        self.slider = QgsRangeSlider(Qt.Horizontal)
+        self.slider = QgsRangeSlider(Qt.Orientation.Horizontal)
         self.start_date = QDate(self.MIN_YEAR, 1, 1)
         self.end_date = QDate.currentDate()
         self.slider.setMinimum(0)

@@ -2,6 +2,7 @@
 name=Urkataster Tools
 qgisMinimumVersion=3.40
 qgisMaximumVersion=4.99
+supportsQt6=True
 icon=images/urkataster-tools-icon.svg
 description=Tools for BS Urkataster
 about=Tools for BS Urkataster
@@ -13,3 +14,4 @@ homepage=https://github.com/opengisch/ch.bs.urkataster
 repository=https://github.com/opengisch/ch.bs.urkataster
 category=Vector
 experimental=False
+plugin_dependencies=Append Features to Layer
