@@ -41,8 +41,10 @@ Um ein Referenzobjekt um eine Geometrie zu erweitern gibt es verschiedene Wege.
 ### Geometrie zeichnen und Referenzobjekt auf der Karte verlinken
 
 1. Du erfasst die Geometrie. 
+
     ![alt text](assets/image-6.png)
 2. Du erfasst die Informationen der Geometrie (wie Datum, Genauigkeit etc.) und linkst sie zum Referenzobjekt indem du das Referenzobjekt auf der Karte auswählst.
+
     ![alt text](assets/image-13.png)
 
 Weiter gibt es auch die Möglichkeit, eine bestehende Geometrie zu duplizieren (oder auch einfach "copy-pasten") und anschliessend anpassen.
@@ -53,17 +55,47 @@ Weiter gibt es auch die Möglichkeit, eine bestehende Geometrie zu duplizieren (
 Weiter kann man auch gleich aus dem Formular des Referenzobjektes eine Geometrie erfassen. Diese Möglichkeit scheint intuitiver, aber ist auch etwas umständlicher.
 
 1. Du öffnest das Formular des Referenzobjektes (zum Beispiel über das Identifikationstool).
+
     ![alt text](assets/image-9.png)
 2. Du navigierst auf den Reiter der Geometrien und findest dort auch die Tools, um eine neue Geometrie zu erfassen.
+
     ![alt text](assets/image-10.png)
 3. Das Formular verschwindet zwischenzeitlich und du kannst die Geometrie erfassen.
+
     ![alt text](assets/image-11.png)
 4. Nach Erfassung erscheint das Formular für die Eigenschaften der Geometrie (das Referenzobjekt ist bereits verlinkt)
+
     ![](assets/image-12.png)
 5. Und wird schliesslich zur Liste hinzugefügt.
 
 Weiter gibt es auch hier die Möglichkeit, eine bestzehende Geometrie zu duplizieren. Mit dem betreffenden Button oder auch mit Rechtsklick-Menu auf einem Feature.
+
 ![alt text](assets/image-14.png)
+
+## Attribute erfassen und verlinken
+
+Analog zu den Geometrien gibt es auch die zwei Wege um ein Referenzobjekt um Attribute zu erweitern.
+
+### Attribute hinzufügen und Refernzobjekt auf der Karte zuweisen
+
+1. Du erstellst ein Attribute Objekt.
+
+    ![alt text](assets/image-attr6.png) 
+
+2. Du erfasst die Informationen wie Parameter (oder auch Datum etc.) und linkst sie zum Referenzobjekt indem du das Referenzobjekt auf der Karte auswählst.
+
+    ![alt text](assets/image-attr7.png)
+
+### Attribute aus Referenzobjekt erfassen
+
+Weiter kann man auch hier gleich aus dem Formular des Referenzobjektes ein Attribut-Objekt erfassen.
+
+1. Du öffnest das Formular des Referenzobjektes (zum Beispiel über das Identifikationstool).
+
+    ![alt text](assets/image-9.png)
+2. Du navigierst auf den Reiter der Attribute und findest dort kannst du ein neues Attribut Objekt hinzufügen.
+
+    ![alt text](assets/image-attr8.png)
 
 ## Objekte Filtern
 

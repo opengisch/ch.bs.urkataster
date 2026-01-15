@@ -37,6 +37,7 @@ nav:
   - Getting started: setup.md
   - Arbeiten mit dem Urkataster: user-guide.md
   - Daten Import und Export: importexport.md
+  - Technische Informationen: tech-info.md
 
 markdown_extensions:
   - attr_list
