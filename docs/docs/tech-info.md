@@ -13,6 +13,8 @@ Infomationen zur Datenbank liegen unter "database". Das Datenmodell und die Funk
 ### Datenmodell
 ![erm](assets/erm.png)
 
+<div class="page-break"></div>
+
 ### Triggerfunktion
 
 #### 1. Datum

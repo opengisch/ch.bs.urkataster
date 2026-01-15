@@ -34,6 +34,8 @@ Auch die Attribute eines Referenzobjekts können über die Zeit ändern, weshalb
 
 ![](assets/image-5.png)
 
+<div class="page-break"></div>
+
 ## Geometrie erfassen und verlinken
 
 Um ein Referenzobjekt um eine Geometrie zu erweitern gibt es verschiedene Wege.
@@ -72,6 +74,8 @@ Weiter gibt es auch hier die Möglichkeit, eine bestzehende Geometrie zu duplizi
 
 ![alt text](assets/image-14.png)
 
+<div class="page-break"></div>
+
 ## Attribute erfassen und verlinken
 
 Analog zu den Geometrien gibt es auch die zwei Wege um ein Referenzobjekt um Attribute zu erweitern.
@@ -96,6 +100,8 @@ Weiter kann man auch hier gleich aus dem Formular des Referenzobjektes ein Attri
 2. Du navigierst auf den Reiter der Attribute und findest dort kannst du ein neues Attribut Objekt hinzufügen.
 
     ![alt text](assets/image-attr8.png)
+
+<div class="page-break"></div>
 
 ## Objekte Filtern
 

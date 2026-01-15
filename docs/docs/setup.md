@@ -28,6 +28,8 @@ host=postgres
 
 Falls du mehrere DBs hast (zBs. Test- und Produktiv-Umgebung), kannst du auch mehrer Profile in QGIS erstellen und dort das Service File definieren. Menü "Einstellungen" > "Optionen" > "System" > (runterscrollen) "Umgebung", mit "+" neue Umgebungsvariable `PGSERVICEFILE` erstellen.
 
+<div class="page-break"></div>
+
 ## Öffnen des Projektes
 
 Das Projekt lässt sich über den Karten-Button öffnen, in der Toolbar ganz links.

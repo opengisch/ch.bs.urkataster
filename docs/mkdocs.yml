@@ -21,7 +21,7 @@ theme:
     logo: assets/urkataster-tools-icon.svg
   palette:
     - scheme: default
-      primary: black
+      primary: grey
       toggle:
         icon: material/weather-night
         name: Switch to dark mode

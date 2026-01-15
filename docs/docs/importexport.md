@@ -14,6 +14,8 @@ Man kann ein Shapefile auswählen, die Geometrien und die Von- und Bis-Datum wer
 
 *Projekt > Eigenschaften... > Datenquellen* und dort den Transaktionsmodus auf "Lokaler Bearbeitungsbuffer".
 
+<div class="page-break"></div>
+
 ## Technische Details
 
 Das ganze Modell sieht so aus.
@@ -31,6 +33,8 @@ Das Modell enthält die drei Branches für die drei Objektarten. Deshalb ist es 
 5. **Append features to Gebäude (Grundriss)** Objekte werden dem Geometrie-Layer hinzugefügt.
 
 Je nach Branch (Gebäude, Parzelle oder Adresse) werden artenspezifische Attribute berücksichtig.
+
+<div class="page-break"></div>
 
 # Export
 
@@ -59,6 +63,8 @@ Du kannst auch nur einzelne Objekte exportieren. Dazu selektierst du die Referen
 ### 4. Zielordner definieren
 
 Definiere einen existierenden Ordner auf deinem System, wo das exportierte File gespeichert werden soll.
+
+<div class="page-break"></div>
 
 ## Technische Details
 
