@@ -35,13 +35,26 @@ class FeatureUpdater(QObject):
             date (QDate): The date to filter layers by.
             gesichert (bool): If True, use gesichert fields; otherwise, use vermutlich fields.
         """
+        project_layers = QgsProject.instance().mapLayers().values()
+
+        if not next(iter(project_layers), None):
+            self.iface.messageBar().pushWarning("Urkataster Tools", "Es sind keine Layer im Projekt vorhanden.")
+            return
+
         from_field = self.GESICHERT_AB_FIELD if gesichert else self.VERMUTLICH_AB_FIELD
         to_field = self.GESICHERT_BIS_FIELD if gesichert else self.VERMUTLICH_BIS_FIELD
 
         filter_from_date_str = filter_from_date.toString("yyyy-MM-dd")
         filter_to_date_str = filter_to_date.toString("yyyy-MM-dd")
-        for layer in QgsProject.instance().mapLayers().values():
+
+        for layer in project_layers:
             if layer.type() == QgsMapLayer.VectorLayer:
+                if layer.isEditable():
+                    self.iface.messageBar().pushWarning(
+                        "Urkataster Tools",
+                        "Filter können nicht angewendet werden, solange ein Layer nicht im Bearbeitungsmodus ist.",
+                    )
+                    return
                 if layer.fields().indexFromName(from_field) != -1 and layer.fields().indexFromName(to_field) != -1:
                     self._apply_filter(layer, filter_from_date_str, filter_to_date_str, from_field, to_field)
         self.iface.mainWindow().statusBar().showMessage(
@@ -72,9 +85,20 @@ class FeatureUpdater(QObject):
             date (QDate): The date to filter layers by.
             gesichert (bool): If True, use gesichert fields; otherwise, use vermutlich fields.
         """
+        project_layers = QgsProject.instance().mapLayers().values()
 
-        for layer in QgsProject.instance().mapLayers().values():
+        if not next(iter(project_layers), None):
+            self.iface.messageBar().pushWarning("Urkataster Tools", "Es sind keine Layer im Projekt vorhanden.")
+            return
+
+        for layer in project_layers:
             if layer.type() == QgsMapLayer.VectorLayer:
+                if layer.isEditable():
+                    self.iface.messageBar().pushWarning(
+                        "Urkataster Tools",
+                        "Filter können nicht entfernt werden, solange ein Layer nicht im Bearbeitungsmodus ist.",
+                    )
+                    return
                 if layer.name() == "Referenzobjekt (Gebäude)":
                     layer.setSubsetString("(art = 'gebaeude')")
                 elif layer.name() == "Referenzobjekt (Parzelle)":
