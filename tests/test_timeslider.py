@@ -28,7 +28,7 @@ class TestTimeslider(unittest.TestCase):
 
         # load project
         temp_projectpath = os.path.join(cls.basetestpath, "urkataster.qgz")
-        shutil.copyfile(plugindata_path("qgis-project/urkataster.qgz"), temp_projectpath)
+        shutil.copyfile(plugindata_path("qgis-project/urkataster-test.qgz"), temp_projectpath)
         QgsProject.instance().read(temp_projectpath)
 
         cls.the_timeslider = TimesliderWidget(None, 0)  # delay is 0 to act immediately
