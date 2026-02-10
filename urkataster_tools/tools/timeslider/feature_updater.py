@@ -52,7 +52,7 @@ class FeatureUpdater(QObject):
                 if layer.isEditable():
                     self.iface.messageBar().pushWarning(
                         "Urkataster Tools",
-                        "Filter können nicht angewendet werden, solange ein Layer nicht im Bearbeitungsmodus ist.",
+                        "Filter können nicht angewendet werden, solange ein Layer im Bearbeitungsmodus ist.",
                     )
                     return
                 if layer.fields().indexFromName(from_field) != -1 and layer.fields().indexFromName(to_field) != -1:
@@ -96,7 +96,7 @@ class FeatureUpdater(QObject):
                 if layer.isEditable():
                     self.iface.messageBar().pushWarning(
                         "Urkataster Tools",
-                        "Filter können nicht entfernt werden, solange ein Layer nicht im Bearbeitungsmodus ist.",
+                        "Filter können nicht entfernt werden, solange ein Layer im Bearbeitungsmodus ist.",
                     )
                     return
                 if layer.name() == "Referenzobjekt (Gebäude)":
