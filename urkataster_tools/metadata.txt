@@ -14,4 +14,4 @@ homepage=https://github.com/opengisch/ch.bs.urkataster
 repository=https://github.com/opengisch/ch.bs.urkataster
 category=Vector
 experimental=False
-plugin_dependencies=Append Features to Layer
+plugin_dependencies=AppendFeaturesToLayer,linking_relation_editor
