@@ -90,6 +90,8 @@ Analog zu den Geometrien gibt es auch die zwei Wege um ein Referenzobjekt um Att
 
     ![alt text](assets/image-attr7.png)
 
+<div class="page-break"></div>
+
 ### Attribute aus Referenzobjekt erfassen
 
 Weiter kann man auch hier gleich aus dem Formular des Referenzobjektes ein Attribut-Objekt erfassen.
@@ -100,6 +102,26 @@ Weiter kann man auch hier gleich aus dem Formular des Referenzobjektes ein Attri
 2. Du navigierst auf den Reiter der Attribute und findest dort kannst du ein neues Attribut Objekt hinzufügen.
 
     ![alt text](assets/image-attr8.png)
+
+<div class="page-break"></div>
+
+## Quellen und Vorgängerobjekte hinzufügen
+
+### Quellen für Gemoetrie- und Attribut-Objekte
+
+Ein Geometrie- oder auch ein Attribut-Objekt kann auf verschiedenen Quellen (Rasterdaten, Dokumenten etc.) basieren. Diese Dokumente können über die Liste der Quellen verlinkt werden. Dazu gehst du auf den zweiten Reiter "Quellen":
+
+![alt text](assets/image-quellen.png)
+
+Ein weiteres Feld ist auf dem Hauptreiter "Allgemein" wo eine allgemeine Notitz zu den Quellen erfasst werden kann:
+
+![alt text](assets/image-infoquelle.png)
+
+### Vorgänger- und Nachfolger-Referenzobjekte
+
+Ein Referenzobjekt kann einerseits ein oder mehrere Vorgänger- bzw. Nachfolger-Objekte besitzen. Diese werden über den Reiter "Vorgänger / Nachfolger" verlinkt. 
+
+![alt text](assets/image-vorgaenger.png)
 
 <div class="page-break"></div>
 
