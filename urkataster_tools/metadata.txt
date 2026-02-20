@@ -1,0 +1,17 @@
+[general]
+name=Urkataster Tools
+qgisMinimumVersion=3.40
+qgisMaximumVersion=4.99
+supportsQt6=True
+icon=images/urkataster-tools-icon.svg
+description=Tools for BS Urkataster
+about=Tools for BS Urkataster
+version=dev
+author=OPENGIS.ch
+email=info@opengis.ch
+tracker=https://github.com/opengisch/ch.bs.urkataster/issues
+homepage=https://github.com/opengisch/ch.bs.urkataster
+repository=https://github.com/opengisch/ch.bs.urkataster
+category=Vector
+experimental=False
+plugin_dependencies=Append Features to Layer,Linking Relation Editor
