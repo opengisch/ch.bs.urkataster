@@ -340,3 +340,45 @@ Weiter bei Bedarf bei 1.
 #### Zeitliche Einschränkung
 
 Es wird nur gefordert, die Geometrie zeitlich zu filtern (auch nur das wurde offeriert). Dennoch könnte es vielleicht sinnvoll sein, auch die Attribute und Referenzobjekte zeitlich zu filtern. Dafür müsste man wohl einen Layerfilter bauen, der über einen selbstgebauten Slider sich je nach dem anpasst.
+
+## Import GPKG
+
+```mermaid
+erDiagram
+
+    gebaeude {
+        UUID uuid
+        UUID referenzobjekt_uuid
+        TEXT vorgaenger_uuids
+        DATE vermutlich_ab
+        DATE vermutlich_bis
+        DATE gesichert_ab
+        DATE gesichert_bis
+    }
+
+    adresse {
+        UUID uuid
+        UUID referenzobjekt_uuid
+        TEXT vorgaenger_uuids
+        DATE vermutlich_ab
+        DATE vermutlich_bis
+        DATE gesichert_ab
+        DATE gesichert_bis
+        TEXT strasse
+        TEXT nummer
+        TEXT plz
+        TEXT ort
+    }
+
+    parzelle {
+        UUID uuid
+        UUID referenzobjekt_uuid
+        TEXT vorgaenger_uuids
+        DATE vermutlich_ab
+        DATE vermutlich_bis
+        DATE gesichert_ab
+        DATE gesichert_bis
+        TEXT parzellennummer
+    }
+
+```
