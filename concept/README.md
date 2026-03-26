@@ -354,6 +354,7 @@ erDiagram
         DATE vermutlich_bis
         DATE gesichert_ab
         DATE gesichert_bis
+        MultiPolygonZ geometrie
     }
 
     adresse {
@@ -368,6 +369,7 @@ erDiagram
         TEXT nummer
         TEXT plz
         TEXT ort
+        PointZ geometrie
     }
 
     parzelle {
@@ -379,6 +381,7 @@ erDiagram
         DATE gesichert_ab
         DATE gesichert_bis
         TEXT parzellennummer
+        MultiPolygonZ geometrie
     }
 
 ```
