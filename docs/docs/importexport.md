@@ -1,4 +1,4 @@
-# Import
+# Import Shape-Files
 
 Im QGIS Projekt ist eine Modell enthalten, um Shape Files in die betreffenden Layer zu importieren.
 
@@ -35,6 +35,11 @@ Das Modell enthält die drei Branches für die drei Objektarten. Deshalb ist es 
 Je nach Branch (Gebäude, Parzelle oder Adresse) werden artenspezifische Attribute berücksichtig.
 
 <div class="page-break"></div>
+
+# Import GeoPackage
+
+Die Daten im GeoPackage haben folgende Struktur:
+
 
 # Export
 

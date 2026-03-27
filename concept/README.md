@@ -347,20 +347,28 @@ Es wird nur gefordert, die Geometrie zeitlich zu filtern (auch nur das wurde off
 erDiagram
 
     gebaeude {
-        UUID uuid
-        UUID referenzobjekt_uuid
-        TEXT vorgaenger_uuids
+        INTEGER fid "auto PK"
+        TEXT geometrie_uuid
+        TEXT attribute_uuid
+        TEXT referenzobjekt_uuid "mandatory"
+        TEXT vorgaenger_referenzobjekt_uuids
         DATE vermutlich_ab
         DATE vermutlich_bis
         DATE gesichert_ab
         DATE gesichert_bis
+        TEXT eid
+        TEXT idkantonal
+        TEXT bezeichnung
+        TEXT quelle
         MultiPolygonZ geometrie
     }
 
     adresse {
-        UUID uuid
-        UUID referenzobjekt_uuid
-        TEXT vorgaenger_uuids
+        INTEGER fid "auto PK"
+        TEXT geometrie_uuid
+        TEXT attribute_uuid
+        TEXT referenzobjekt_uuid "mandatory"
+        TEXT vorgaenger_referenzobjekt_uuids
         DATE vermutlich_ab
         DATE vermutlich_bis
         DATE gesichert_ab
@@ -369,19 +377,116 @@ erDiagram
         TEXT nummer
         TEXT plz
         TEXT ort
+        TEXT eid
+        TEXT idkantonal
+        TEXT bezeichnung
+        TEXT quelle
         PointZ geometrie
     }
 
     parzelle {
-        UUID uuid
-        UUID referenzobjekt_uuid
-        TEXT vorgaenger_uuids
+        INTEGER fid "auto PK"
+        TEXT geometrie_uuid
+        TEXT attribute_uuid
+        TEXT referenzobjekt_uuid "mandatory"
+        TEXT vorgaenger_referenzobjekt_uuids
         DATE vermutlich_ab
         DATE vermutlich_bis
         DATE gesichert_ab
         DATE gesichert_bis
         TEXT parzellennummer
+        TEXT eid
+        TEXT idkantonal
+        TEXT bezeichnung
+        TEXT quelle
+        TEXT sektion
         MultiPolygonZ geometrie
     }
-
 ```
+
+Wie jede Tabelle in einem GeoPackage haben auch diese Tabellen eine automatisch generierte `fid`. Diese wird im Import nicht berücksichtigt.
+
+### Ablauf
+
+- Lesen des Objekts
+- Existiert bereits ein Geometrieobjekt mit dieser geometrie_uuid, dann ignoriere es oder überschreibe es (je nach Setting)
+- Existiert bereits ein Attributeobjekt mit dieser attribute_uuid, dann ignoriere es oder überschreibe es (je nach Setting)
+- Existiert bereits ein Referenzobjekt mit dieser referenzobjekt_uuid, dann knüpfe das Objekt an dieses Referenzobjekt
+- Existiert noch kein Referenzobjekt mit diesr referenzobjekt_uuid, dann erstelle ein neues Referenzobjekt und knüpfe das Geometrieobjekt (wenn vorhanden) und das Attributeobjekt (wenn vorhanden) daran
+- Vorgänger-Referenzobjekte werden durchiteriert und wenn vorhanden gelinkt, wenn nicht vorhanden leer erstellt.
+
+In ein neues Referenzobjekt kommt:
+- referenzobjekt_uuid als PK
+- eid
+- idkantonal
+- bezeichnung
+- keine Geometrien und von-bis Daten, da diese mit dem Datenbanktrigger erstellt werden
+
+In ein neues Vorgänger-Referenzobjekt kommt: 
+- Eintrag des vorgaenger_referenzobjekt_uuids
+
+In eine neue Vorgänger-Verknüpfung kommt
+- referenzobjekt_uuid als FK
+- Eintrag des vorgaenger_referenzobjekt_uuid
+
+In die Gebäude-Geometrie kommt:
+- geometrie_uuid als PK 
+- referenzobjekt_uuid als FK 
+- vermutlich_ab
+- vermutlich_bis
+- gesichert_ab
+- gesichert_bis
+- quelle
+- geometrie
+
+In die Gebäude-Attribute kommt:
+- attribute_uuid als PK
+- referenzobjekt_uuid als FK
+- vermutlich_ab
+- vermutlich_bis
+- gesichert_ab
+- gesichert_bis
+
+In die Adresse-Geometrie kommt:
+- geometrie_uuid als PK 
+- referenzobjekt_uuid als FK 
+- vermutlich_ab
+- vermutlich_bis
+- gesichert_ab
+- gesichert_bis
+- quelle
+- geometrie
+
+In die Adresse-Attribute kommt:
+- attribute_uuid als PK
+- referenzobjekt_uuid als FK
+- vermutlich_ab
+- vermutlich_bis
+- gesichert_ab
+- gesichert_bis
+- strasse
+- nummer
+- plz
+- ort
+
+In die Parzelle-Geometrie kommt:
+- geometrie_uuid als PK 
+- referenzobjekt_uuid als FK 
+- vermutlich_ab
+- vermutlich_bis
+- gesichert_ab
+- gesichert_bis
+- quelle
+- geometrie
+
+In die Parzelle-Attribute kommt:
+- attribute_uuid als PK
+- referenzobjekt_uuid als FK
+- vermutlich_ab
+- vermutlich_bis
+- gesichert_ab
+- gesichert_bis
+- parzellennummer
+- sektion
+
+Ich nehme an, dass aktuell ein Objekt beides ist: Geometrie und Attribute (zBs. Strasse/Nr etc.) deshalb wäre die Aufsplittung in zwei Tabellen bei den Quelldaten vermutlich umständlich. Folglich ist es nach wie vor eine Tabelle. Angenommen es würden zukünftig neue Attribute (zBS. anderer Strassenname zu einem anderen Zeitpunkt aber bei der gleichen Geometrie) importiert werden, wäre das ein Adressobjekt ohne geometrie_uuid, neuer attribute_uuid und gleicher referenzobjekt_geometrie.
