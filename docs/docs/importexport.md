@@ -50,7 +50,9 @@ Das Modell heisst `GPKG to Urkataster` und lässt sich über die Verarbeitungswe
 
 *Projekt > Eigenschaften... > Datenquellen* und dort den Transaktionsmodus auf "Lokaler Bearbeitungsbuffer".
 
-## Funktonsweise
+<div class="page-break"></div>
+
+## Funktionsweise
 
 am Beispiel der "Gebäude"
 
@@ -77,6 +79,8 @@ Enhält der Eintrag einen Wert in `vorgaenger_referenzobjekt_uuids` (kann eine U
 - Wenn man auswählt, dass Duplikate ignoriert werden, werden keine Objekte abgefüllt, derren UUID bereits in der Datenbank ist. 
 - Wenn man auswählt, dass Duplikate aktualisiert werden sollen, werden die Attribute (oder auch Geometrie) der vorhandenen Objekte mit gleicher UUID aktualisiert.
 
+<div class="page-break"></div>
+
 ## Technische Details
 
 Das ganze Modell sieht so aus (hier für GeoPackage)
@@ -91,8 +95,10 @@ Auch dieses Modell ist gemäss Objektarten in drei Teile aufgeteilt, auch wenn i
 2. **Filter Funktionen** Die Objekte werden nun so gefilter, dass wir Referenzobjekte, Geometrieobjekte und Attributobjekte haben.
 3. **Refactor Fields** Die Felder müssen nun gemappt werden zu den Namen der Spalten in PostgreSQL, ausserdem müssen Standardwerte abgefüllt werden.
 4. **Remove Duplicates** Die Input-Objektlayer werden vorgängig von Duplikaten bereinigt
-5. **Append Features** Dann werden die Objekte abgefüllt. Zuerst die Referenzobjekte, da die andern davon abhängen. 
+5. **Append Features** Dann werden die Objekte abgefüllt. Zuerst die Referenzobjekte, erst dann werden die weiteren Schritte ausgeführt (mit Dependency zum nächsten Step: Linie von "Append..." zurück auf "Filter attribute...")
 6. **Vorgänger** Die Liste der Vorgänger wird in einzelne Objekte aufgeteilt und die Links werden einzeln abgefüllt. Dabei werden Referenzobjekte vorgängig neu erstellt, derren UUID noch nicht in der Datenbank gefunden werden kann.
+
+<div class="page-break"></div>
 
 # Export
 
