@@ -554,9 +554,19 @@ CREATE TABLE quelldaten (
 CREATE TABLE vorgaenger (
     fk_vorgaenger_referenzobjekt UUID NOT NULL  REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
     fk_nachfolger_referenzobjekt UUID NOT NULL  REFERENCES referenzobjekt(id_referenzobjekt) ON DELETE CASCADE  DEFERRABLE INITIALLY DEFERRED, -- das DEFERRABLE... stellt sicher, dass wir in Transaktionen mit mehreren Inserts keine FK Probleme bekommen (wenn Childs vor Parent erstellt werden in Relation Editors)
+    entry_identifier TEXT,
     PRIMARY KEY (fk_vorgaenger_referenzobjekt, fk_nachfolger_referenzobjekt),
     CHECK (fk_vorgaenger_referenzobjekt <> fk_nachfolger_referenzobjekt) -- prevent self-references
 );
+
+CREATE OR REPLACE FUNCTION trigger_update_entry_identifier_id() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.entry_identifier := NEW.fk_vorgaenger_referenzobjekt::TEXT || '-' || NEW.fk_nachfolger_referenzobjekt::TEXT;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER vorgaenger_id_trigge AFTER INSERT OR UPDATE ON vorgaenger FOR EACH ROW EXECUTE FUNCTION trigger_update_entry_identifier_id();
 
 -- Indizes
 
