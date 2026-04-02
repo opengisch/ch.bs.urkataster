@@ -38,7 +38,7 @@ Je nach Branch (Gebäude, Parzelle oder Adresse) werden artenspezifische Attribu
 
 # Import GeoPackage
 
-Die Daten im GeoPackage haben folgende Struktur:
+Die Daten im GeoPackage ((https://github.com/opengisch/ch.bs.urkataster/tree/main/database/migrationdb.gpkg) haben folgende Struktur:
 
 ![erm](assets/gpkg-erm.png)
 
