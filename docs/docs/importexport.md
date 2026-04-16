@@ -46,9 +46,11 @@ Das Modell heisst `GPKG to Urkataster` und lässt sich über die Verarbeitungswe
 
 ![alt text](assets/image-impgpkg.png)
 
-**Achtung:** Es kann sein, dass es nicht in der automatischen Transaktion funktioniert (je nach QGIS Version). Wenn du aber den Transaktionsmodus zwischenzeitlich deaktivierst, sollte es klappen:
+**Achtung:** Es kann sein, dass es nicht in der automatischen Transaktion funktioniert (je nach QGIS Version kann es zu einem Freeze führen, weil sich die Layer gegenseitig blockieren). Deshalb empfielt sich den Transaktionsmodus zwischenzeitlich zu deaktivieren:
 
 *Projekt > Eigenschaften... > Datenquellen* und dort den Transaktionsmodus auf "Lokaler Bearbeitungsbuffer".
+
+Falls es dennoch zu Problemen führt, soll man QGIS schliessen und erneut öffnen, das Projekt öffnen und den Transaktionsmodus wechseln.
 
 <div class="page-break"></div>
 
